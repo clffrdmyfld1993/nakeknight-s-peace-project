@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Shield, Users, Scale, Heart } from "lucide-react";
 import heroImage from "@/assets/nakeknight-hero.png";
+import CaseFiles from "./CaseFiles";
 
 const stats = [
   { label: "Disputes Resolved", value: "2,847", icon: Scale },
@@ -150,6 +151,9 @@ export default function HeroProfile() {
           </div>
         </div>
       </section>
+
+      {/* Case Files */}
+      <CaseFiles />
 
       {/* Footer */}
       <footer className="max-w-6xl mx-auto px-6 py-12 flex items-center justify-between">
