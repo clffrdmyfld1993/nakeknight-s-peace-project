@@ -152,6 +152,9 @@ export default function HeroProfile() {
         </div>
       </section>
 
+      {/* Case Files */}
+      <CaseFiles />
+
       {/* Footer */}
       <footer className="max-w-6xl mx-auto px-6 py-12 flex items-center justify-between">
         <span className="font-display text-xl text-primary tracking-wider">NAKEKNIGHT</span>
