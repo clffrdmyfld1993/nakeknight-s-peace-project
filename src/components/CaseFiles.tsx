@@ -5,6 +5,12 @@ import caseIronPact from "@/assets/case-iron-pact.jpg";
 import caseNeonTruce from "@/assets/case-neon-truce.jpg";
 import caseAshenAccord from "@/assets/case-ashen-accord.jpg";
 import casePitPeace from "@/assets/case-pit-peace.jpg";
+import caseDrownedTreaty from "@/assets/case-drowned-treaty.jpg";
+import caseForgeAccord from "@/assets/case-forge-accord.jpg";
+import caseHighwayKings from "@/assets/case-highway-kings.jpg";
+import caseFrostLine from "@/assets/case-frost-line.jpg";
+import caseMercyWard from "@/assets/case-mercy-ward.jpg";
+import caseLastHaven from "@/assets/case-last-haven.jpg";
 
 interface CaseFile {
   id: string;
@@ -17,8 +23,7 @@ interface CaseFile {
   summary: string;
   narrative: string;
   resolution: string;
-  hasVideo?: boolean;
-  videoUrl?: string;
+  videoFile?: string;
 }
 
 const caseFiles: CaseFile[] = [
@@ -30,6 +35,7 @@ const caseFiles: CaseFile[] = [
     status: "RESOLVED",
     threat: "CRITICAL",
     image: caseIronPact,
+    videoFile: "nakeknight-iron-pact.mp4",
     summary: "Two warlord factions locked in a blood feud over a freshwater source. 3,000 lives at stake.",
     narrative: `The ruins of Redmarsh still smoked when NakeKnight arrived. Commander Voss of the Iron Wolves had held the eastern reservoir for six months. Warlord Kael's Red Ashes had been dying of thirst since summer.
 
@@ -52,6 +58,7 @@ Commander Voss's hand shook as she signed. Warlord Kael spat on the ground — t
     status: "RESOLVED",
     threat: "SEVERE",
     image: caseNeonTruce,
+    videoFile: "nakeknight-neon-truce.mp4",
     summary: "Two megacorps on the brink of deploying private armies over territorial AI licensing rights.",
     narrative: `Helix Dynamics and Obsidian Group controlled 80% of the remaining autonomous defense systems. When Helix discovered Obsidian had been secretly licensing their AI cores to black market weapons dealers, they didn't call lawyers. They mobilized a strike team.
 
@@ -74,6 +81,7 @@ By dawn, the two CEOs had signed a mutual defense pact and a joint investigation
     status: "RESOLVED",
     threat: "EXTREME",
     image: caseAshenAccord,
+    videoFile: "nakeknight-ashen-accord.mp4",
     summary: "Five nomadic tribes at war over a sacred oasis. Generations of blood debt. 12,000 displaced.",
     narrative: `This was the one they said was impossible. Five tribes. Five blood debts stretching back decades. The Oasis of Shal'mar — the last green water source in the Ashlands — had been fought over so many times the sand around it was more red than gold.
 
@@ -98,6 +106,7 @@ The Ashen Accord divided the oasis into five sectors with rotating stewardship. 
     status: "RESOLVED",
     threat: "HIGH",
     image: casePitPeace,
+    videoFile: "nakeknight-pit-peace.mp4",
     summary: "An illegal gladiator ring using indebted fighters. Two champions forced to fight to the death.",
     narrative: `The Pit was the worst-kept secret in Sector 7. Underground fights, rigged bets, fighters trapped by debt they could never repay. The final match of the season: Talon vs. Reaver. Two men who'd been friends before the debts consumed them. Fight to the death. Winner goes free. Loser's family pays double.
 
@@ -113,6 +122,194 @@ NakeKnight turned to the arena. Both fighters were circling each other, blades d
 
 Sera Vox killed the lights. By morning, the Pit was empty. Every fighter's debt was erased — not out of mercy, but because the records mysteriously corrupted that night. NakeKnight never confirmed his involvement.`,
     resolution: "47 fighters freed. Sera Vox disappeared. The Pit remains closed. Talon and Reaver now run a community defense training program.",
+  },
+  {
+    id: "NK-0112",
+    codename: "THE DROWNED TREATY",
+    title: "Battle of the Flooded Capital",
+    date: "2025.10.05",
+    status: "RESOLVED",
+    threat: "EXTREME",
+    image: caseDrownedTreaty,
+    videoFile: "nakeknight-drowned-treaty.mp4",
+    summary: "Two naval factions controlling opposite banks of a flooded megacity. Trade routes severed. 20,000 civilians starving.",
+    narrative: `When the sea walls collapsed, New Meridian became a canal city overnight. Admiral Hess controlled the northern waterways. Captain Orozco held the southern docks. Between them: six miles of flooded streets where 20,000 civilians were slowly starving.
+
+Both sides sank supply boats meant for civilians, each accusing the other of smuggling weapons in relief shipments. They were both right.
+
+NakeKnight arrived on a fishing boat. No flags. No armor. Just a waterproof case full of satellite imagery.
+
+He called a meeting on neutral ground — the half-submerged roof of the old courthouse, water lapping at their boots. He spread the images across a makeshift table.
+
+"You're fighting over shipping lanes," he said. "Meanwhile, the eastern breakwater is cracking. In six weeks, this entire district goes underwater. Every shipping lane you're fighting over will be fifty feet deep."
+
+He proposed a joint engineering corps to reinforce the breakwater, with trade routes split by cargo type rather than geography. Food and medicine flow freely. Military supplies get inspected by a joint commission.
+
+Admiral Hess refused. NakeKnight pulled up a live satellite feed showing cracks spreading through the breakwater in real-time. "You can fight over a city that won't exist in a month. Or you can save it together."
+
+Hess signed at midnight. Orozco at dawn.`,
+    resolution: "Breakwater reinforced in 23 days. Joint Trade Commission still operates. Civilian supply lines restored within 72 hours of signing.",
+  },
+  {
+    id: "NK-0128",
+    codename: "THE FORGE ACCORD",
+    title: "Factory Revolt at Ironside Works",
+    date: "2025.11.14",
+    status: "RESOLVED",
+    threat: "HIGH",
+    image: caseForgeAccord,
+    videoFile: "nakeknight-forge-accord.mp4",
+    summary: "400 factory workers taken hostage by their own security force in a dispute over ration distribution.",
+    narrative: `Ironside Works was the last functioning munitions factory in the eastern corridor. The workers made the bullets. The corporate security force distributed the rations. When the corporation cut rations by 40% to "increase productivity," the security team was ordered to enforce compliance. Instead, half of them sided with the workers.
+
+The result: a three-way standoff. Workers barricaded inside with the machines. Loyal security outside with the weapons. Defecting security caught in the middle, holding the food stores.
+
+NakeKnight arrived to find three groups of exhausted, hungry people pointing guns at each other over the thing they all needed to survive.
+
+He started with the defectors — the ones everyone distrusted. "You broke your oath to protect these people," he told them. "Now prove it wasn't just cowardice."
+
+He brokered a deal in stages. First, the defectors would distribute emergency rations to everyone — workers and loyal security alike. No conditions. Just food.
+
+Hungry people think differently than starving people. After the first real meal in weeks, NakeKnight brought all three groups to the factory floor.
+
+"The corporation isn't coming back," he told them flatly. "You're not employees anymore. You're a community. So decide how a community shares."
+
+They argued for fourteen hours. NakeKnight mediated every minute. The Forge Accord established a worker-owned cooperative with elected security. Rations distributed by need, not rank.`,
+    resolution: "Ironside Works operates as the region's first worker cooperative. Production up 30%. Ration disputes resolved by elected committee.",
+  },
+  {
+    id: "NK-0134",
+    codename: "HIGHWAY KINGS",
+    title: "The Interstate Ceasefire",
+    date: "2025.12.01",
+    status: "RESOLVED",
+    threat: "SEVERE",
+    image: caseHighwayKings,
+    videoFile: "nakeknight-highway-kings.mp4",
+    summary: "Two motorcycle gangs controlling rival sections of the last functioning highway. Trade caravans ambushed weekly.",
+    narrative: `Route 9 was the last artery connecting the coastal settlements to the inland farms. The Razorbacks controlled miles 0-80. The Iron Saints held 80-160. Anything caught in between got stripped for parts — vehicles, cargo, people.
+
+Trade caravans lost three trucks a week. Farmers couldn't move crops. Medicine couldn't reach the coast. Both gangs claimed they were "protecting" their territory. Both were bleeding the region dry.
+
+NakeKnight rode in on a beat-up motorcycle. No escort. He found Razorback leader "Throttle" Jacobs at a roadside chop shop and asked one question: "How much fuel do you burn per week chasing caravans?"
+
+Throttle laughed. Then he did the math. The answer made him stop laughing.
+
+NakeKnight proposed the Highway Compact: both gangs become paid escort services. Caravans pay a flat toll — split evenly — and get armed protection through the entire route. Ambushes end. Revenue goes up. Fuel costs plummet.
+
+Iron Saints leader Maria "Chain" Delgado was harder to convince. "We're not truckers," she spat.
+
+"No," NakeKnight agreed. "You're the most effective security force on this highway. Start charging for it instead of stealing from the people who need you."
+
+It took two weeks of shuttle diplomacy between rest stops and roadside diners. The gangs met at the Route 9 overpass at midnight — the exact spot where they'd fought their bloodiest battle.
+
+They shook hands in the headlights of forty motorcycles.`,
+    resolution: "Route 9 trade volume up 400%. Both gangs earn more from escorts than they ever did from ambushes. Zero caravan losses in 8 months.",
+  },
+  {
+    id: "NK-0147",
+    codename: "THE FROST LINE",
+    title: "Northern Mountain War",
+    date: "2026.01.09",
+    status: "RESOLVED",
+    threat: "EXTREME",
+    image: caseFrostLine,
+    videoFile: "nakeknight-frost-line.mp4",
+    summary: "Two highland armies locked in a winter siege over a mountain fortress controlling the only pass south. 6,000 troops freezing.",
+    narrative: `Fort Karros sat at 8,000 feet, commanding the only passable route through the Ashcrest Mountains. General Petra Vane's Northern Guard had held it for a year. Warlord Shen Kai's Southern Alliance had been camped at the base for three months, waiting for a crack in the defenses.
+
+Neither side could win. Vane couldn't break the siege. Kai couldn't take the walls. Meanwhile, winter was killing both armies slowly — frostbite, starvation, desertion.
+
+NakeKnight climbed the mountain alone in a blizzard. He reached the fort walls at dawn, ice hanging from his armor, and shouted up to General Vane: "Your supply chain collapsed two weeks ago. You have food for eleven days."
+
+Then he walked back down to Kai's camp. "Her walls are intact. Your trebuchets can't breach them. You have food for nine days."
+
+He let both facts settle for 48 hours. Then he called the meeting.
+
+It was held in a cave between the two positions — neutral ground chosen by NakeKnight because it was the only place warm enough for rational thought.
+
+"The pass isn't a prize," he told them. "It's a service. Whoever controls it controls trade. The question is whether you want to control a frozen graveyard or a functioning economy."
+
+The Frost Line Agreement established joint control of Fort Karros. Vane's troops man the walls. Kai's troops manage trade logistics. Toll revenue split 50/50. Any attack on the fort by either side forfeits their share permanently.
+
+"You're asking us to trust each other," Vane said.
+
+"I'm asking you to trust math," NakeKnight replied. "The numbers don't lie, even when generals do."`,
+    resolution: "Fort Karros processes 200 trade caravans monthly. Both armies reduced to peacekeeping garrisons. Zero combat deaths since signing.",
+  },
+  {
+    id: "NK-0155",
+    codename: "MERCY WARD",
+    title: "The Hospital Standoff",
+    date: "2026.02.18",
+    status: "RESOLVED",
+    threat: "CRITICAL",
+    image: caseMercyWard,
+    videoFile: "nakeknight-mercy-ward.mp4",
+    summary: "Armed faction seizes the last functioning hospital. Demands territory in exchange for releasing patients and staff.",
+    narrative: `Saint Elara Hospital was the last place in the eastern districts where you could get surgery, antibiotics, or blood transfusions. When Colonel Marsh's militia seized it, they didn't hurt anyone — they just locked the doors and made their demands. Forty square blocks of territory, recognized sovereignty, and amnesty for their fighters.
+
+Three hundred patients trapped inside. Sixty medical staff. Twelve of them children on life support.
+
+The city council wanted to storm the building. NakeKnight stopped them with four words: "There are ventilators inside."
+
+He requested 24 hours. He got 12.
+
+NakeKnight walked into the hospital unarmed. He found Colonel Marsh in the administrator's office, drinking coffee from a mug that said "World's Best Nurse."
+
+"You're not a monster, Marsh," NakeKnight said. "Monsters don't post guards at the pediatric ward to make sure the machines stay running."
+
+Marsh stiffened. "I'm a pragmatist."
+
+"Then let's be pragmatic. You can't hold this building forever. You don't have the medical knowledge to run it. And every hour you're here, patients are deteriorating because your soldiers make the doctors nervous."
+
+NakeKnight's proposal was surgical: Marsh gets a 12-block zone — not 40 — with conditional sovereignty tied to maintaining peace. The hospital becomes permanently neutral ground, protected by both sides. And Marsh's fighters get first access to medical care in exchange for providing security.
+
+"You're giving me less than I asked for," Marsh said.
+
+"I'm giving you more than you deserve. Take the deal before the council's patience runs out."
+
+Marsh took the deal. The patients were never moved. The ventilators never stopped.`,
+    resolution: "Saint Elara Hospital declared neutral ground. Colonel Marsh's zone has the lowest violence rate in the district. Hospital capacity expanded 40%.",
+  },
+  {
+    id: "NK-0168",
+    codename: "LAST HAVEN",
+    title: "The Bunker Summit",
+    date: "2026.03.15",
+    status: "RESOLVED",
+    threat: "EXTREME",
+    image: caseLastHaven,
+    videoFile: "nakeknight-last-haven.mp4",
+    summary: "Six faction leaders trapped in a bunker during a radiation storm. Three days to negotiate or tear each other apart.",
+    narrative: `It was supposed to be a routine summit — six faction leaders meeting to discuss trade routes at Bunker 17. Then the radiation alarms went off. A toxic storm front, three days minimum. The blast doors sealed automatically.
+
+Six leaders who hated each other. Forty bodyguards. One bunker. No way out.
+
+By hour six, General Vane and Warlord Kai had nearly come to blows (again). Colonel Marsh was stockpiling water. The Razorback delegation was eyeing the armory. Captain Orozco had barricaded her section.
+
+NakeKnight had planned this.
+
+Not the storm — that was real. But the meeting location, the timing, the guest list. He'd studied weather patterns for months. He knew a storm was coming. He needed these six people in a room with no exit and no choice but to talk.
+
+"You can kill each other," he announced over the intercom. "But the blast doors don't open for 72 hours regardless. So you'd be killing each other and then living with the bodies."
+
+He spent the first day just keeping people alive. Breaking up fights. Rationing food. Making sure nobody poisoned anybody.
+
+Day two, he started talking. One-on-ones in storage closets and maintenance corridors. Finding common ground between people who'd been at war for years.
+
+Day three, he brought them all to the map table. Every faction's territory, resources, and vulnerabilities laid bare under fluorescent lights.
+
+"You've all been playing a game none of you can win," he said. "You're spending 60% of your resources on defense against each other. Imagine what you could build with that 60%."
+
+The Last Haven Accord was signed on a bunker table by six people who hadn't slept in three days. A mutual non-aggression pact. Shared resource mapping. Quarterly summits — above ground, with exits.
+
+"Did you trap us in here on purpose?" General Vane asked as the blast doors finally opened.
+
+NakeKnight squinted into the sunlight. "I scheduled a meeting. The weather was a coincidence."
+
+Nobody believed him. Nobody cared.`,
+    resolution: "The Last Haven Accord — the first multi-faction peace treaty in a decade. Resource conflicts down 70%. All six factions now participate in quarterly summits.",
   },
 ];
 
@@ -141,7 +338,7 @@ export default function CaseFiles() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: (i % 4) * 0.1 }}
             onClick={() => setSelectedCase(c)}
             className="group relative overflow-hidden rounded-lg border border-border bg-card text-left hover:border-primary/50 transition-colors"
           >
@@ -163,7 +360,7 @@ export default function CaseFiles() {
                   {c.status}
                 </span>
               </div>
-              {c.hasVideo && (
+              {c.videoFile && (
                 <div className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-primary/80 flex items-center justify-center">
                   <Play className="w-4 h-4 text-primary-foreground ml-0.5" />
                 </div>
