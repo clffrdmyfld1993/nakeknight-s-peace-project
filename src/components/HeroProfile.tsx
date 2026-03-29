@@ -34,7 +34,7 @@ export default function HeroProfile() {
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center justify-between mb-12"
           >
-            <span className="font-display text-3xl tracking-wider text-primary">NAKEKNIGHT</span>
+            <span className="font-display text-3xl tracking-wider text-primary">NAKEKNIGHT™</span>
             <span className="text-sm text-muted-foreground tracking-widest uppercase">Hero Dossier</span>
           </motion.nav>
 
@@ -161,8 +161,8 @@ export default function HeroProfile() {
 
       {/* Footer */}
       <footer className="max-w-6xl mx-auto px-6 py-12 flex items-center justify-between">
-        <span className="font-display text-xl text-primary tracking-wider">NAKEKNIGHT</span>
-        <span className="text-sm text-muted-foreground">"Peace is not the absence of conflict — it's the presence of justice."</span>
+        <span className="font-display text-xl text-primary tracking-wider">NAKEKNIGHT™</span>
+        <span className="text-xs text-muted-foreground/60">© {new Date().getFullYear()} NakeKnight™. All rights reserved. All characters and narratives are fictional.</span>
       </footer>
     </div>
   );
