@@ -30,14 +30,7 @@ export default function HeroProfile() {
 
         <div className="relative max-w-6xl mx-auto px-6 pt-8 pb-16">
           {/* Nav */}
-          <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between mb-12"
-          >
-            <span className="font-display text-3xl tracking-wider text-primary">NAKEKNIGHT™</span>
-            <span className="text-sm text-muted-foreground tracking-widest uppercase">Hero Dossier</span>
-          </motion.nav>
+          {/* Nav handled by SiteNav */}
 
           {/* Hero content */}
           <div className="grid md:grid-cols-2 gap-8 items-center">
