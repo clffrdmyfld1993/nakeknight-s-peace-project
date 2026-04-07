@@ -3,6 +3,7 @@ import { Shield, Users, Scale, Heart } from "lucide-react";
 import heroImage from "@/assets/nakeknight-hero.png";
 import CaseFiles from "./CaseFiles";
 import Testimonials from "./Testimonials";
+import BuiltByAI from "./BuiltByAI";
 
 const stats = [
   { label: "Disputes Resolved", value: "2,847", icon: Scale },
@@ -20,7 +21,7 @@ const abilities = [
 
 export default function HeroProfile() {
   return (
-    <div className="min-h-screen bg-background font-body">
+    <div className="min-h-screen bg-background font-body pt-14">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background glow */}
@@ -158,6 +159,9 @@ export default function HeroProfile() {
 
       {/* Testimonials */}
       <Testimonials />
+
+      {/* Built By AI */}
+      <BuiltByAI />
 
       {/* Footer */}
       <footer className="max-w-6xl mx-auto px-6 py-12 flex items-center justify-between">
