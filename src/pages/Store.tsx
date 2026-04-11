@@ -3,6 +3,22 @@ import { ShoppingCart, Download, Bot, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { mockProducts, type Product } from "@/lib/medusa";
 
+import ironPactImg from "@/assets/store/iron-pact-comic.jpg";
+import heroArtImg from "@/assets/store/hero-art-pack.jpg";
+import loreImg from "@/assets/store/lore-collection.jpg";
+import wallpaperImg from "@/assets/store/wallpaper-pack.jpg";
+import ashenImg from "@/assets/store/ashen-accord-comic.jpg";
+import soundtrackImg from "@/assets/store/soundtrack.jpg";
+
+const productImages: Record<string, string> = {
+  prod_001: ironPactImg,
+  prod_002: heroArtImg,
+  prod_003: loreImg,
+  prod_004: wallpaperImg,
+  prod_005: ashenImg,
+  prod_006: soundtrackImg,
+};
+
 const categories = ["All", "Comics", "Art Packs", "Lore", "Wallpapers", "Audio"];
 
 export default function Store() {
@@ -78,8 +94,19 @@ export default function Store() {
               className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors group"
             >
               {/* Thumbnail */}
-              <div className="relative h-48 bg-muted flex items-center justify-center overflow-hidden">
-                <Sparkles className="w-12 h-12 text-primary/20" />
+              <div className="relative h-48 bg-muted overflow-hidden">
+                {productImages[product.id] ? (
+                  <img
+                    src={productImages[product.id]}
+                    alt={product.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <Sparkles className="w-12 h-12 text-primary/20" />
+                  </div>
+                )}
                 {product.badge && (
                   <span className="absolute top-3 right-3 px-2 py-0.5 bg-primary text-primary-foreground font-display text-[10px] tracking-widest rounded-sm">
                     {product.badge}
