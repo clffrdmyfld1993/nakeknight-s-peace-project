@@ -8,8 +8,10 @@ const links = [
   { to: "/", label: "DOSSIER" },
   { to: "/command", label: "COMMAND" },
   { to: "/store", label: "STORE" },
+  { to: "/costumes", label: "COSTUMES" },
   { to: "/license", label: "LICENSE" },
   { to: "/pitch", label: "INVEST" },
+  { to: "/social", label: "SOCIAL" },
 ];
 
 export default function SiteNav() {
