@@ -26,6 +26,7 @@ export const mockProducts: Product[] = [
     priceFormatted: "$4.99",
     category: "Comics",
     badge: "BESTSELLER",
+    stripePriceId: "price_1TXekBQaKvygaDfuD0wRtBXy",
   },
   {
     id: "prod_002",
