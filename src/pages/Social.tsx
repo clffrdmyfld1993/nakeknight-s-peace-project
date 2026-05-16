@@ -29,7 +29,7 @@ export default function Social() {
               <Bot className="w-3 h-3" /> AI Marketing
             </span>
           </div>
-          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">SOCIAL HUB</h1>
+          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">NAKEKNIGHT™ SOCIAL HUB</h1>
           <p className="text-muted-foreground max-w-xl">
             Follow NakeKnight™ across every platform. AI-generated content, weekly drops, and community engagement.
           </p>

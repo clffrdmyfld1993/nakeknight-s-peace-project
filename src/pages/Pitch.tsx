@@ -63,7 +63,8 @@ export default function Pitch() {
             </span>
           </div>
           <h1 className="font-display text-7xl md:text-8xl text-foreground leading-[0.85] mb-6">
-            INVEST IN<br />THE FUTURE<br />OF IP
+            <span aria-hidden="true">INVEST IN<br />THE FUTURE<br />OF IP</span>
+            <span className="sr-only">NakeKnight™ Investor Pitch — Invest in the Future of IP</span>
           </h1>
           <p className="text-muted-foreground text-lg max-w-xl">
             NakeKnight™ is the world's first AI-native entertainment brand — proving that

@@ -57,7 +57,7 @@ export default function Command() {
             <AiBadge tool="Lovable" />
           </div>
           <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">
-            BUSINESS FACTS
+            NAKEKNIGHT™ BUSINESS FACTS
           </h1>
           <p className="text-muted-foreground max-w-xl">
             No simulated numbers. Every figure below is a verifiable fact:

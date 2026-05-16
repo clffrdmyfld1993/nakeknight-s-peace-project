@@ -78,7 +78,7 @@ export default function License() {
               <Bot className="w-3 h-3" /> AI-Powered IP
             </span>
           </div>
-          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">LICENSING PORTAL</h1>
+          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">NAKEKNIGHT™ LICENSING PORTAL</h1>
           <p className="text-muted-foreground max-w-xl">
             NakeKnight™ is an AI-native IP built for the future of entertainment.
             Partner with us to bring the Peacemaker to your medium.
@@ -86,6 +86,7 @@ export default function License() {
         </motion.div>
 
         {/* Tiers */}
+        <h2 className="font-display text-3xl text-foreground mb-6">LICENSING TIERS</h2>
         <div className="grid md:grid-cols-2 gap-6 mb-16">
           {tiers.map((tier, i) => (
             <motion.div

@@ -91,7 +91,7 @@ export default function Store() {
           className="mb-12"
         >
           <p className="text-primary font-display tracking-[0.3em] mb-2">DIGITAL ARMORY</p>
-          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">CONTENT STORE</h1>
+          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">NAKEKNIGHT™ CONTENT STORE</h1>
           <p className="text-muted-foreground max-w-xl">
             Comics, art, lore, and soundtracks — all AI-generated, all from the NakeKnight™ universe.
           </p>
@@ -137,6 +137,7 @@ export default function Store() {
         </div>
 
         {/* Product grid */}
+        <h2 className="font-display text-3xl text-foreground mb-6">FEATURED DROPS</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product, i) => (
             <motion.div

@@ -28,12 +28,13 @@ export default function Costumes() {
               <Sparkles className="w-3 h-3" /> AI-Generated
             </span>
           </div>
-          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">COSTUME VAULT</h1>
+          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">NAKEKNIGHT™ COSTUME VAULT</h1>
           <p className="text-muted-foreground max-w-xl">
             NakeKnight™ across dimensions. Every era, every style — all AI-designed costume variants for licensing, merch, and storytelling.
           </p>
         </motion.div>
 
+        <h2 className="font-display text-3xl text-foreground mb-6">COSTUME GALLERY</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {costumes.map((costume, i) => (
             <motion.div
