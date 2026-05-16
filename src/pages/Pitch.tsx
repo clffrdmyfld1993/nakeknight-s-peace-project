@@ -2,10 +2,11 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Bot, TrendingUp, Target, Users, Lightbulb, DollarSign, Rocket, Shield } from "lucide-react";
 
-const marketStats = [
-  { label: "Global IP Licensing Market", value: "$340B", note: "by 2027" },
-  { label: "AI Content Creation Market", value: "$110B", note: "by 2030" },
-  { label: "Digital Comics Market", value: "$2.8B", note: "growing 8% YoY" },
+// HARDCODED FACTS — no projected or simulated figures.
+const catalogFacts = [
+  { label: "Digital SKUs live on Stripe", value: "6" },
+  { label: "Entry price", value: "$2.99" },
+  { label: "Top price", value: "$14.99" },
 ];
 
 const useOfFunds = [
@@ -17,12 +18,12 @@ const useOfFunds = [
 ];
 
 const traction = [
-  { metric: "Case Files Published", value: "10" },
-  { metric: "Digital Products", value: "6" },
-  { metric: "Licensing Tiers", value: "4" },
-  { metric: "AI Tools Integrated", value: "8+" },
-  { metric: "Website Built In", value: "48hrs" },
-  { metric: "Total Investment So Far", value: "$0" },
+  { metric: "Digital Products Live", value: "6" },
+  { metric: "Licensing Tiers Defined", value: "4" },
+  { metric: "Public Site Routes", value: "8" },
+  { metric: "Payment Provider", value: "Stripe" },
+  { metric: "Backend", value: "Lovable Cloud" },
+  { metric: "Outside Capital Raised", value: "$0" },
 ];
 
 function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -109,18 +110,21 @@ export default function Pitch() {
           </div>
         </Section>
 
-        {/* Market */}
+        {/* Catalog snapshot — verifiable facts only */}
         <Section>
           <div className="flex items-center gap-3 mb-6">
             <TrendingUp className="w-6 h-6 text-primary" />
-            <h2 className="font-display text-4xl text-foreground">MARKET OPPORTUNITY</h2>
+            <h2 className="font-display text-4xl text-foreground">CATALOG SNAPSHOT</h2>
           </div>
+          <p className="text-muted-foreground mb-6 max-w-xl">
+            Hardcoded facts from the live Stripe catalog. No projections, no
+            simulated market sizes.
+          </p>
           <div className="grid md:grid-cols-3 gap-4">
-            {marketStats.map(s => (
+            {catalogFacts.map(s => (
               <div key={s.label} className="p-6 bg-card border border-border rounded-lg text-center">
                 <div className="font-display text-5xl text-primary mb-1">{s.value}</div>
-                <div className="text-sm text-foreground mb-1">{s.label}</div>
-                <div className="text-xs text-muted-foreground">{s.note}</div>
+                <div className="text-sm text-foreground">{s.label}</div>
               </div>
             ))}
           </div>
@@ -133,7 +137,7 @@ export default function Pitch() {
             <h2 className="font-display text-4xl text-foreground">TRACTION</h2>
           </div>
           <p className="text-muted-foreground mb-8">
-            Built in under 48 hours with <span className="text-foreground">$0 invested</span> — using only AI tools.
+            Outside capital raised to date: <span className="text-foreground">$0</span>. Everything live below was built and deployed using AI tooling.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {traction.map(t => (

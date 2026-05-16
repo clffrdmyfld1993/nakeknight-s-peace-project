@@ -11,6 +11,8 @@ export interface Product {
   priceFormatted: string;
   category: string;
   badge?: string;
+  /** Live Stripe price ID — used by the create-payment edge function. */
+  stripePriceId?: string;
 }
 
 // Mock products used until Medusa is connected
@@ -24,6 +26,7 @@ export const mockProducts: Product[] = [
     priceFormatted: "$4.99",
     category: "Comics",
     badge: "BESTSELLER",
+    stripePriceId: "price_1TXekBQaKvygaDfuD0wRtBXy",
   },
   {
     id: "prod_002",
@@ -33,6 +36,7 @@ export const mockProducts: Product[] = [
     price: 9.99,
     priceFormatted: "$9.99",
     category: "Art Packs",
+    stripePriceId: "price_1TXekpQaKvygaDfuVAcK9WYr",
   },
   {
     id: "prod_003",
@@ -43,6 +47,7 @@ export const mockProducts: Product[] = [
     priceFormatted: "$14.99",
     category: "Lore",
     badge: "PREMIUM",
+    stripePriceId: "price_1TXelCQaKvygaDfuIU1E618w",
   },
   {
     id: "prod_004",
@@ -52,6 +57,7 @@ export const mockProducts: Product[] = [
     price: 2.99,
     priceFormatted: "$2.99",
     category: "Wallpapers",
+    stripePriceId: "price_1TXeo8QaKvygaDfuLrhyzP8Q",
   },
   {
     id: "prod_005",
@@ -61,6 +67,7 @@ export const mockProducts: Product[] = [
     price: 4.99,
     priceFormatted: "$4.99",
     category: "Comics",
+    stripePriceId: "price_1TXeqHQaKvygaDfuwx5nOZ87",
   },
   {
     id: "prod_006",
@@ -71,6 +78,7 @@ export const mockProducts: Product[] = [
     priceFormatted: "$7.99",
     category: "Audio",
     badge: "NEW",
+    stripePriceId: "price_1TXevvQaKvygaDfuxBJrXkCG",
   },
 ];
 

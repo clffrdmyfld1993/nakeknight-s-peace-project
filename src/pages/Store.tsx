@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
-import { ShoppingCart, Download, Bot, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { ShoppingCart, Download, Bot, Sparkles, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { mockProducts, type Product } from "@/lib/medusa";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 import ironPactImg from "@/assets/store/iron-pact-comic.jpg";
 import heroArtImg from "@/assets/store/hero-art-pack.jpg";
@@ -24,14 +26,60 @@ const categories = ["All", "Comics", "Art Packs", "Lore", "Wallpapers", "Audio"]
 export default function Store() {
   const [filter, setFilter] = useState("All");
   const [cart, setCart] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    if (status === "success") {
+      toast.success("Payment complete — thank you!");
+      setCart([]);
+    } else if (status === "canceled") {
+      toast("Checkout canceled.");
+    }
+    if (status) {
+      window.history.replaceState({}, "", "/store");
+    }
+  }, []);
 
   const products = filter === "All" ? mockProducts : mockProducts.filter(p => p.category === filter);
 
   const addToCart = (product: Product) => {
     setCart(prev => [...prev, product]);
+    toast.success(`${product.title} added`);
   };
 
   const cartTotal = cart.reduce((sum, p) => sum + p.price, 0);
+
+  const checkout = async (items: Product[], key: string) => {
+    const lineItems = items
+      .filter(p => p.stripePriceId)
+      .reduce<Record<string, number>>((acc, p) => {
+        acc[p.stripePriceId!] = (acc[p.stripePriceId!] || 0) + 1;
+        return acc;
+      }, {});
+    const payload = Object.entries(lineItems).map(([price, quantity]) => ({ price, quantity }));
+    if (payload.length === 0) {
+      toast.error("This item isn't available for purchase yet.");
+      return;
+    }
+    setLoading(key);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment", {
+        body: { items: payload },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error(data?.error || "No checkout URL returned");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Checkout failed");
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background font-body pt-14">
@@ -60,7 +108,12 @@ export default function Store() {
               <ShoppingCart className="w-5 h-5 text-primary" />
               <span className="text-foreground font-display">{cart.length} ITEMS — ${cartTotal.toFixed(2)}</span>
             </div>
-            <button className="px-4 py-2 bg-primary text-primary-foreground font-display text-sm tracking-wider rounded-sm hover:bg-primary/90 transition-colors">
+            <button
+              onClick={() => checkout(cart, "cart")}
+              disabled={loading === "cart"}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display text-sm tracking-wider rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
+            >
+              {loading === "cart" && <Loader2 className="w-4 h-4 animate-spin" />}
               CHECKOUT
             </button>
           </motion.div>
@@ -120,15 +173,24 @@ export default function Store() {
                 </div>
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span className="font-display text-2xl text-primary">{product.priceFormatted}</span>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary font-display text-sm tracking-wider rounded-sm hover:bg-primary/20 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    ADD
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="px-3 py-1.5 bg-primary/10 text-primary font-display text-xs tracking-wider rounded-sm hover:bg-primary/20 transition-colors"
+                    >
+                      ADD
+                    </button>
+                    <button
+                      onClick={() => checkout([product], product.id)}
+                      disabled={loading === product.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground font-display text-xs tracking-wider rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
+                    >
+                      {loading === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                      BUY
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mt-3 flex items-center gap-1 text-[10px] text-primary/50">
