@@ -110,18 +110,21 @@ export default function Pitch() {
           </div>
         </Section>
 
-        {/* Market */}
+        {/* Catalog snapshot — verifiable facts only */}
         <Section>
           <div className="flex items-center gap-3 mb-6">
             <TrendingUp className="w-6 h-6 text-primary" />
-            <h2 className="font-display text-4xl text-foreground">MARKET OPPORTUNITY</h2>
+            <h2 className="font-display text-4xl text-foreground">CATALOG SNAPSHOT</h2>
           </div>
+          <p className="text-muted-foreground mb-6 max-w-xl">
+            Hardcoded facts from the live Stripe catalog. No projections, no
+            simulated market sizes.
+          </p>
           <div className="grid md:grid-cols-3 gap-4">
-            {marketStats.map(s => (
+            {catalogFacts.map(s => (
               <div key={s.label} className="p-6 bg-card border border-border rounded-lg text-center">
                 <div className="font-display text-5xl text-primary mb-1">{s.value}</div>
-                <div className="text-sm text-foreground mb-1">{s.label}</div>
-                <div className="text-xs text-muted-foreground">{s.note}</div>
+                <div className="text-sm text-foreground">{s.label}</div>
               </div>
             ))}
           </div>
