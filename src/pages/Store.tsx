@@ -108,7 +108,12 @@ export default function Store() {
               <ShoppingCart className="w-5 h-5 text-primary" />
               <span className="text-foreground font-display">{cart.length} ITEMS — ${cartTotal.toFixed(2)}</span>
             </div>
-            <button className="px-4 py-2 bg-primary text-primary-foreground font-display text-sm tracking-wider rounded-sm hover:bg-primary/90 transition-colors">
+            <button
+              onClick={() => checkout(cart, "cart")}
+              disabled={loading === "cart"}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display text-sm tracking-wider rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
+            >
+              {loading === "cart" && <Loader2 className="w-4 h-4 animate-spin" />}
               CHECKOUT
             </button>
           </motion.div>
