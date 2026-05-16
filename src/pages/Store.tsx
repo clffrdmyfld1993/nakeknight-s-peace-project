@@ -26,14 +26,60 @@ const categories = ["All", "Comics", "Art Packs", "Lore", "Wallpapers", "Audio"]
 export default function Store() {
   const [filter, setFilter] = useState("All");
   const [cart, setCart] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    if (status === "success") {
+      toast.success("Payment complete — thank you!");
+      setCart([]);
+    } else if (status === "canceled") {
+      toast("Checkout canceled.");
+    }
+    if (status) {
+      window.history.replaceState({}, "", "/store");
+    }
+  }, []);
 
   const products = filter === "All" ? mockProducts : mockProducts.filter(p => p.category === filter);
 
   const addToCart = (product: Product) => {
     setCart(prev => [...prev, product]);
+    toast.success(`${product.title} added`);
   };
 
   const cartTotal = cart.reduce((sum, p) => sum + p.price, 0);
+
+  const checkout = async (items: Product[], key: string) => {
+    const lineItems = items
+      .filter(p => p.stripePriceId)
+      .reduce<Record<string, number>>((acc, p) => {
+        acc[p.stripePriceId!] = (acc[p.stripePriceId!] || 0) + 1;
+        return acc;
+      }, {});
+    const payload = Object.entries(lineItems).map(([price, quantity]) => ({ price, quantity }));
+    if (payload.length === 0) {
+      toast.error("This item isn't available for purchase yet.");
+      return;
+    }
+    setLoading(key);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment", {
+        body: { items: payload },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        throw new Error(data?.error || "No checkout URL returned");
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Checkout failed");
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background font-body pt-14">
