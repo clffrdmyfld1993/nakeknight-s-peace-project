@@ -2,10 +2,11 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Bot, TrendingUp, Target, Users, Lightbulb, DollarSign, Rocket, Shield } from "lucide-react";
 
-const marketStats = [
-  { label: "Global IP Licensing Market", value: "$340B", note: "by 2027" },
-  { label: "AI Content Creation Market", value: "$110B", note: "by 2030" },
-  { label: "Digital Comics Market", value: "$2.8B", note: "growing 8% YoY" },
+// HARDCODED FACTS — no projected or simulated figures.
+const catalogFacts = [
+  { label: "Digital SKUs live on Stripe", value: "6" },
+  { label: "Entry price", value: "$2.99" },
+  { label: "Top price", value: "$14.99" },
 ];
 
 const useOfFunds = [
@@ -17,12 +18,12 @@ const useOfFunds = [
 ];
 
 const traction = [
-  { metric: "Case Files Published", value: "10" },
-  { metric: "Digital Products", value: "6" },
-  { metric: "Licensing Tiers", value: "4" },
-  { metric: "AI Tools Integrated", value: "8+" },
-  { metric: "Website Built In", value: "48hrs" },
-  { metric: "Total Investment So Far", value: "$0" },
+  { metric: "Digital Products Live", value: "6" },
+  { metric: "Licensing Tiers Defined", value: "4" },
+  { metric: "Public Site Routes", value: "8" },
+  { metric: "Payment Provider", value: "Stripe" },
+  { metric: "Backend", value: "Lovable Cloud" },
+  { metric: "Outside Capital Raised", value: "$0" },
 ];
 
 function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
