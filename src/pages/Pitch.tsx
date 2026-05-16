@@ -137,7 +137,7 @@ export default function Pitch() {
             <h2 className="font-display text-4xl text-foreground">TRACTION</h2>
           </div>
           <p className="text-muted-foreground mb-8">
-            Built in under 48 hours with <span className="text-foreground">$0 invested</span> — using only AI tools.
+            Outside capital raised to date: <span className="text-foreground">$0</span>. Everything live below was built and deployed using AI tooling.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {traction.map(t => (
