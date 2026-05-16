@@ -78,6 +78,7 @@ export const mockProducts: Product[] = [
     priceFormatted: "$7.99",
     category: "Audio",
     badge: "NEW",
+    stripePriceId: "price_1TXevvQaKvygaDfuxBJrXkCG",
   },
 ];
 
