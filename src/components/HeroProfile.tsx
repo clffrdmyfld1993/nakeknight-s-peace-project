@@ -41,19 +41,26 @@ export default function HeroProfile() {
             >
               <p className="text-primary font-display text-lg tracking-[0.3em] mb-2">THE PEACEMAKER</p>
               <h1 className="font-display text-7xl md:text-8xl lg:text-9xl text-foreground leading-[0.85] mb-6">
-                NAKE<br />KNIGHT
+                <span className="block">NAKE<br />KNIGHT</span>
+                <span className="sr-only">NakeKnight — The Peacemaker</span>
               </h1>
               <p className="text-muted-foreground text-lg leading-relaxed max-w-md mb-8">
                 In a world torn by conflict, one man stands between chaos and resolution.
                 He doesn't fight with fists — he fights with <span className="text-primary font-medium">fairness</span>.
               </p>
               <div className="flex gap-3">
-                <div className="px-5 py-2.5 bg-primary text-primary-foreground font-display text-lg tracking-wider rounded-sm">
+                <a
+                  href="#case-files"
+                  className="px-5 py-2.5 bg-primary text-primary-foreground font-display text-lg tracking-wider rounded-sm hover:bg-primary/90 transition-colors"
+                >
                   VIEW CASE FILES
-                </div>
-                <div className="px-5 py-2.5 border border-border text-foreground font-display text-lg tracking-wider rounded-sm">
+                </a>
+                <a
+                  href="mailto:afterglow619@proton.me"
+                  className="px-5 py-2.5 border border-border text-foreground font-display text-lg tracking-wider rounded-sm hover:border-primary/40 transition-colors"
+                >
                   CONTACT
-                </div>
+                </a>
               </div>
             </motion.div>
 
