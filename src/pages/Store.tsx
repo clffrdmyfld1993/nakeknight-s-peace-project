@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
-import { ShoppingCart, Download, Bot, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { ShoppingCart, Download, Bot, Sparkles, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { mockProducts, type Product } from "@/lib/medusa";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 import ironPactImg from "@/assets/store/iron-pact-comic.jpg";
 import heroArtImg from "@/assets/store/hero-art-pack.jpg";
