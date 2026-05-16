@@ -173,15 +173,24 @@ export default function Store() {
                 </div>
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span className="font-display text-2xl text-primary">{product.priceFormatted}</span>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary font-display text-sm tracking-wider rounded-sm hover:bg-primary/20 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    ADD
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="px-3 py-1.5 bg-primary/10 text-primary font-display text-xs tracking-wider rounded-sm hover:bg-primary/20 transition-colors"
+                    >
+                      ADD
+                    </button>
+                    <button
+                      onClick={() => checkout([product], product.id)}
+                      disabled={loading === product.id}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground font-display text-xs tracking-wider rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
+                    >
+                      {loading === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                      BUY
+                    </button>
+                  </div>
                 </div>
 
                 <div className="mt-3 flex items-center gap-1 text-[10px] text-primary/50">
