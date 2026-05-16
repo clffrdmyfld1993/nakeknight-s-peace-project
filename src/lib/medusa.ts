@@ -11,6 +11,8 @@ export interface Product {
   priceFormatted: string;
   category: string;
   badge?: string;
+  /** Live Stripe price ID — used by the create-payment edge function. */
+  stripePriceId?: string;
 }
 
 // Mock products used until Medusa is connected
