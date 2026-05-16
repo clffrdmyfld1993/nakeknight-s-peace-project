@@ -1,2 +1,0 @@
-[functions.create-payment]
-verify_jwt = false
