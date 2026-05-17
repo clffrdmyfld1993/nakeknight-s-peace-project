@@ -22,9 +22,12 @@ export default function SEO({ title, description, path, jsonLd }: SEOProps) {
       <meta property="og:type" content="website" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      {jsonLd && (
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-      )}
+      {jsonLd &&
+        (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((entry, i) => (
+          <script key={i} type="application/ld+json">
+            {JSON.stringify(entry)}
+          </script>
+        ))}
     </Helmet>
   );
 }

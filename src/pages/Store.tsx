@@ -88,13 +88,39 @@ export default function Store() {
         title="NakeKnight™ Content Store — Comics, Art & Soundtracks"
         description="Buy NakeKnight digital drops: comics, art packs, wallpapers, lore collections, and AI-composed soundtracks. Instant download via Stripe."
         path="/store"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          name: "NakeKnight Content Store",
-          url: "https://herodossier.lovable.app/store",
-          description: "Digital comics, art packs, wallpapers, lore, and soundtracks from the NakeKnight universe.",
-        }}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "NakeKnight Content Store",
+            url: "https://herodossier.lovable.app/store",
+            description:
+              "Digital comics, art packs, wallpapers, lore, and soundtracks from the NakeKnight universe.",
+            hasPart: mockProducts.map((p) => ({
+              "@type": "Product",
+              name: p.title,
+              description: p.description,
+              category: p.category,
+              brand: { "@type": "Brand", name: "NakeKnight" },
+              offers: {
+                "@type": "Offer",
+                price: p.price.toFixed(2),
+                priceCurrency: "USD",
+                availability: "https://schema.org/InStock",
+                url: "https://herodossier.lovable.app/store",
+              },
+            })),
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: mockProducts.map((p, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: p.title,
+            })),
+          },
+        ]}
       />
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Header */}
