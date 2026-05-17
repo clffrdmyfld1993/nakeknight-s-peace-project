@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import SEO from "@/components/SEO";
 import { Bot, ExternalLink, Play, Instagram, Twitter, Youtube, Globe } from "lucide-react";
 import promoVideoAsset from "@/assets/promo/nakeknight-reel.mp4.asset.json";
 
@@ -21,6 +22,11 @@ const contentIdeas = [
 export default function Social() {
   return (
     <div className="min-h-screen bg-background font-body pt-14">
+      <SEO
+        title="NakeKnight™ Broadcast — Social Channels & Content"
+        description="Follow NakeKnight on TikTok, Instagram, X, and YouTube. Reels, shorts, costume reveals, and AI-built case file dramatizations."
+        path="/social"
+      />
       <div className="max-w-6xl mx-auto px-6 py-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
           <div className="flex items-center gap-2 mb-2">

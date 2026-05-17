@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import SEO from "@/components/SEO";
 import { Bot, Sparkles } from "lucide-react";
 
 import cyberpunkImg from "@/assets/costumes/cyberpunk-mercenary.jpg";
@@ -20,6 +21,11 @@ const costumes = [
 export default function Costumes() {
   return (
     <div className="min-h-screen bg-background font-body pt-14">
+      <SEO
+        title="NakeKnight™ Costume Vault — Multiverse Variants"
+        description="Explore NakeKnight across eras: cyberpunk mercenary, fantasy paladin, pharaonic guard, gladiator, urban ninja, and formal tuxedo."
+        path="/costumes"
+      />
       <div className="max-w-6xl mx-auto px-6 py-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
           <div className="flex items-center gap-2 mb-2">
