@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import SEO from "@/components/SEO";
 import { ShoppingCart, Download, Bot, Sparkles, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { mockProducts, type Product } from "@/lib/medusa";
@@ -83,6 +84,18 @@ export default function Store() {
 
   return (
     <div className="min-h-screen bg-background font-body pt-14">
+      <SEO
+        title="NakeKnight™ Content Store — Comics, Art & Soundtracks"
+        description="Buy NakeKnight digital drops: comics, art packs, wallpapers, lore collections, and AI-composed soundtracks. Instant download via Stripe."
+        path="/store"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "NakeKnight Content Store",
+          url: "https://herodossier.lovable.app/store",
+          description: "Digital comics, art packs, wallpapers, lore, and soundtracks from the NakeKnight universe.",
+        }}
+      />
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Header */}
         <motion.div

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import SEO from "@/components/SEO";
 import { Bot, ExternalLink, ShoppingBag, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -45,6 +46,11 @@ function AiBadge({ tool }: { tool: string }) {
 export default function Command() {
   return (
     <div className="min-h-screen bg-background font-body pt-14">
+      <SEO
+        title="NakeKnight™ Command Center — Business Facts"
+        description="Live business facts for NakeKnight: AI toolstack, Stripe catalog pricing, and verifiable build details. No projections, no fluff."
+        path="/command"
+      />
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Header */}
         <motion.div

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import SEO from "@/components/SEO";
 import { Shirt, BookOpen, Gamepad2, Film, Bot, ArrowRight, CheckCircle2 } from "lucide-react";
 
 const tiers = [
@@ -65,6 +66,11 @@ const CONTACT_EMAIL = "afterglow619@proton.me";
 export default function License() {
   return (
     <div className="min-h-screen bg-background font-body pt-14">
+      <SEO
+        title="NakeKnight™ Licensing — Merch, Publishing & Media"
+        description="License the NakeKnight IP for merchandise, publishing, gaming, and film. Tiered pricing from $2,500 with full brand & lore access."
+        path="/license"
+      />
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Header */}
         <motion.div

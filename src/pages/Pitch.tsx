@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
+import SEO from "@/components/SEO";
 import { useRef } from "react";
 import { Bot, TrendingUp, Target, Users, Lightbulb, DollarSign, Rocket, Shield } from "lucide-react";
 
@@ -47,6 +48,11 @@ export default function Pitch() {
 
   return (
     <div ref={containerRef} className="min-h-screen bg-background font-body pt-14">
+      <SEO
+        title="NakeKnight™ Investor Pitch — $50K Raise"
+        description="The NakeKnight pitch: AI-built IP, live Stripe storefront, defined licensing tiers, and a $50K raise to scale content and reach."
+        path="/pitch"
+      />
       {/* Progress bar */}
       <motion.div
         className="fixed top-14 left-0 h-0.5 bg-primary z-40"
