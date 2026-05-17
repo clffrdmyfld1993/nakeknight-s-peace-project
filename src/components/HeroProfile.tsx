@@ -4,6 +4,7 @@ import heroImage from "@/assets/nakeknight-hero.png";
 import CaseFiles from "./CaseFiles";
 import Testimonials from "./Testimonials";
 import BuiltByAI from "./BuiltByAI";
+import SEO from "./SEO";
 
 const stats = [
   { label: "Disputes Resolved", value: "2,847", icon: Scale },
@@ -22,6 +23,11 @@ const abilities = [
 export default function HeroProfile() {
   return (
     <div className="min-h-screen bg-background font-body pt-14">
+      <SEO
+        title="NakeKnight™ — The Peacemaker"
+        description="NakeKnight resolves conflict through empathy, fairness, and AI-built storytelling. Explore case files, abilities, and the origin of the Peacemaker."
+        path="/"
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background glow */}
@@ -75,6 +81,10 @@ export default function HeroProfile() {
                 <img
                   src={heroImage}
                   alt="NakeKnight - The Peacemaker"
+                  width={512}
+                  height={512}
+                  fetchPriority="high"
+                  decoding="async"
                   className="relative w-full max-w-md mx-auto rounded-lg shadow-2xl"
                 />
               </div>
@@ -166,7 +176,7 @@ export default function HeroProfile() {
       {/* Footer */}
       <footer className="max-w-6xl mx-auto px-6 py-12 flex items-center justify-between">
         <span className="font-display text-xl text-primary tracking-wider">NAKEKNIGHT™</span>
-        <span className="text-xs text-muted-foreground/60">© {new Date().getFullYear()} NakeKnight™. All rights reserved. All characters and narratives are fictional.</span>
+        <span className="text-xs text-muted-foreground">© {new Date().getFullYear()} NakeKnight™. All rights reserved. All characters and narratives are fictional.</span>
       </footer>
     </div>
   );
