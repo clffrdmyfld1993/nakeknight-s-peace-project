@@ -15,7 +15,7 @@ export default function SEO({ title, description, path, jsonLd, noindex, preload
   const url = `${BASE}${path}`;
   return (
     <Helmet>
-      {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+      {preloadImage && <link rel="preload" as="image" href={preloadImage} />}
 
       <title>{title}</title>
       <meta name="description" content={description} />
