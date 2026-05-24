@@ -27,7 +27,9 @@ export default function HeroProfile() {
         title="NakeKnight™ — The Peacemaker"
         description="NakeKnight resolves conflict through empathy, fairness, and AI-built storytelling. Explore case files, abilities, and the origin of the Peacemaker."
         path="/"
+        preloadImage={heroImage}
       />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background glow */}
@@ -76,7 +78,7 @@ export default function HeroProfile() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="relative"
             >
-              <div className="relative">
+              <div className="relative w-full max-w-md mx-auto aspect-square">
                 <div className="absolute -inset-4 bg-gradient-to-t from-primary/20 via-transparent to-transparent rounded-2xl blur-xl" />
                 <img
                   src={heroImage}
@@ -85,9 +87,10 @@ export default function HeroProfile() {
                   height={512}
                   fetchPriority="high"
                   decoding="async"
-                  className="relative w-full max-w-md mx-auto rounded-lg shadow-2xl"
+                  className="relative w-full h-full object-cover rounded-lg shadow-2xl"
                 />
               </div>
+
             </motion.div>
           </div>
         </div>
