@@ -6,14 +6,17 @@ interface SEOProps {
   path: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
+  preloadImage?: string;
 }
 
 const BASE = "https://herodossier.lovable.app";
 
-export default function SEO({ title, description, path, jsonLd, noindex }: SEOProps) {
+export default function SEO({ title, description, path, jsonLd, noindex, preloadImage }: SEOProps) {
   const url = `${BASE}${path}`;
   return (
     <Helmet>
+      {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+
       <title>{title}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
