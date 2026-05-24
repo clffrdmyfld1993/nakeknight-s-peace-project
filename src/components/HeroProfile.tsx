@@ -27,7 +27,9 @@ export default function HeroProfile() {
         title="NakeKnight™ — The Peacemaker"
         description="NakeKnight resolves conflict through empathy, fairness, and AI-built storytelling. Explore case files, abilities, and the origin of the Peacemaker."
         path="/"
+        preloadImage={heroImage}
       />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background glow */}
