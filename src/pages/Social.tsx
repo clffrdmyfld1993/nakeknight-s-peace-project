@@ -82,12 +82,12 @@ export default function Social() {
                 transition={{ delay: i * 0.1 }}
                 className={`flex items-center gap-3 p-4 rounded-lg border ${p.color} hover:scale-105 transition-transform`}
               >
-                <p.icon className="w-6 h-6" />
+                <p.icon className="w-6 h-6" aria-hidden="true" />
                 <div>
                   <p className="font-display text-sm">{p.name}</p>
-                  <p className="text-xs opacity-70">{p.handle}</p>
+                  <p className="text-xs opacity-90">{p.handle}</p>
                 </div>
-                <ExternalLink className="w-4 h-4 ml-auto opacity-40" />
+                <ExternalLink className="w-4 h-4 ml-auto opacity-70" aria-hidden="true" />
               </motion.a>
             ))}
           </div>

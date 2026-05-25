@@ -373,7 +373,7 @@ export default function CaseFiles() {
               </div>
               <h3 className="font-display text-2xl text-foreground mb-1">{c.codename}</h3>
               <p className="text-sm text-muted-foreground mb-3">{c.title}</p>
-              <p className="text-sm text-muted-foreground/80 line-clamp-2">{c.summary}</p>
+              <p className="text-sm text-muted-foreground line-clamp-2">{c.summary}</p>
             </div>
           </motion.button>
         ))}

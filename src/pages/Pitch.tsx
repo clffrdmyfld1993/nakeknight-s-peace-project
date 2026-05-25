@@ -237,7 +237,7 @@ export default function Pitch() {
 
         {/* Footer note */}
         <div className="py-12 text-center">
-          <p className="text-xs text-muted-foreground/50">
+          <p className="text-xs text-muted-foreground">
             This pitch deck was built entirely by AI using Lovable. NakeKnight™ is a fictional IP created for entertainment purposes.
           </p>
         </div>
