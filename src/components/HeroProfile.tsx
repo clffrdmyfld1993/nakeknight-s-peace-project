@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Shield, Users, Scale, Heart } from "lucide-react";
 import heroImage from "@/assets/nakeknight-hero.png";
 import CaseFiles from "./CaseFiles";
+import Renderings from "./Renderings";
 import Testimonials from "./Testimonials";
 import BuiltByAI from "./BuiltByAI";
 import SEO from "./SEO";
@@ -166,6 +167,9 @@ export default function HeroProfile() {
           </div>
         </div>
       </section>
+
+      {/* Renderings */}
+      <Renderings />
 
       {/* Case Files */}
       <CaseFiles />
