@@ -11,6 +11,7 @@ import License from "./pages/License.tsx";
 import Pitch from "./pages/Pitch.tsx";
 import Costumes from "./pages/Costumes.tsx";
 import Social from "./pages/Social.tsx";
+import Analytics from "./pages/Analytics.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/pitch" element={<Pitch />} />
           <Route path="/costumes" element={<Costumes />} />
           <Route path="/social" element={<Social />} />
+          <Route path="/analytics" element={<Analytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
