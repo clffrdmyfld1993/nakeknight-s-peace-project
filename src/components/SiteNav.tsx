@@ -12,6 +12,7 @@ const links = [
   { to: "/license", label: "LICENSE" },
   { to: "/pitch", label: "INVEST" },
   { to: "/social", label: "SOCIAL" },
+  { to: "/analytics", label: "INTEL" },
 ];
 
 export default function SiteNav() {
