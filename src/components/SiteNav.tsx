@@ -13,6 +13,7 @@ const links = [
   { to: "/pitch", label: "INVEST" },
   { to: "/social", label: "SOCIAL" },
   { to: "/analytics", label: "INTEL" },
+  { to: "/coverage", label: "COVERAGE" },
 ];
 
 export default function SiteNav() {
