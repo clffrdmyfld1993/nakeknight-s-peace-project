@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.gsc-analytics]
 verify_jwt = false
+
+[functions.gsc-coverage]
+verify_jwt = false
