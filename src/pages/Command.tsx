@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
-import { Bot, ExternalLink, ShoppingBag, Sparkles } from "lucide-react";
+import { Bot, ExternalLink, ShoppingBag, Sparkles, Activity, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // HARDCODED FACTS ONLY — no simulated metrics.
 // Prices below are the real live Stripe prices for this catalog (USD).
@@ -44,6 +46,36 @@ function AiBadge({ tool }: { tool: string }) {
 }
 
 export default function Command() {
+  type StripeStats = {
+    activeProducts: number;
+    last30d: { successfulPayments: number; grossCents: number; currency: string };
+    checkedAt: string;
+  };
+  const [stats, setStats] = useState<StripeStats | null>(null);
+  const [statsErr, setStatsErr] = useState<string | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("stripe-stats");
+        if (cancelled) return;
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        setStats(data as StripeStats);
+      } catch (e) {
+        if (!cancelled) setStatsErr(e instanceof Error ? e.message : String(e));
+      } finally {
+        if (!cancelled) setStatsLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const fmtMoney = (cents: number, ccy: string) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: ccy || "USD" }).format(cents / 100);
+
   return (
     <div className="min-h-screen bg-background font-body pt-14">
       <SEO
