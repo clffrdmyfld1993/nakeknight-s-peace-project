@@ -14,6 +14,8 @@ const links = [
   { to: "/social", label: "SOCIAL" },
   { to: "/analytics", label: "INTEL" },
   { to: "/coverage", label: "COVERAGE" },
+  { to: "/about", label: "ABOUT" },
+  { to: "/press", label: "PRESS" },
 ];
 
 export default function SiteNav() {
