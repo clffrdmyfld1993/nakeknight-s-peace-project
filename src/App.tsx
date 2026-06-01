@@ -13,6 +13,8 @@ import Costumes from "./pages/Costumes.tsx";
 import Social from "./pages/Social.tsx";
 import Analytics from "./pages/Analytics.tsx";
 import Coverage from "./pages/Coverage.tsx";
+import About from "./pages/About.tsx";
+import Press from "./pages/Press.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ const App = () => (
           <Route path="/social" element={<Social />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/coverage" element={<Coverage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/press" element={<Press />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
