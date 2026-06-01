@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
-import { Bot, ExternalLink, ShoppingBag, Sparkles } from "lucide-react";
+import { Bot, ExternalLink, ShoppingBag, Sparkles, Activity, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // HARDCODED FACTS ONLY — no simulated metrics.
 // Prices below are the real live Stripe prices for this catalog (USD).
@@ -44,6 +46,36 @@ function AiBadge({ tool }: { tool: string }) {
 }
 
 export default function Command() {
+  type StripeStats = {
+    activeProducts: number;
+    last30d: { successfulPayments: number; grossCents: number; currency: string };
+    checkedAt: string;
+  };
+  const [stats, setStats] = useState<StripeStats | null>(null);
+  const [statsErr, setStatsErr] = useState<string | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("stripe-stats");
+        if (cancelled) return;
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        setStats(data as StripeStats);
+      } catch (e) {
+        if (!cancelled) setStatsErr(e instanceof Error ? e.message : String(e));
+      } finally {
+        if (!cancelled) setStatsLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const fmtMoney = (cents: number, ccy: string) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: ccy || "USD" }).format(cents / 100);
+
   return (
     <div className="min-h-screen bg-background font-body pt-14">
       <SEO
@@ -72,12 +104,65 @@ export default function Command() {
           </p>
         </motion.div>
 
+        {/* LIVE DATA ONLY — pulled directly from Stripe */}
+        <section className="mb-16">
+          <div className="flex items-center gap-2 mb-6">
+            <h2 className="font-display text-3xl text-foreground">LIVE DATA ONLY</h2>
+            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded px-1.5 py-0.5">
+              <Activity className="w-3 h-3" /> Stripe live
+            </span>
+            <span className="inline-flex items-center gap-1 text-[10px] text-primary/60 bg-primary/5 border border-primary/10 rounded px-1.5 py-0.5">
+              <Activity className="w-3 h-3" /> GA4 G-28DS4V8XRT
+            </span>
+          </div>
+
+          {statsLoading && (
+            <div className="p-5 bg-card border border-border rounded-lg flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" /> Reading live Stripe data…
+            </div>
+          )}
+
+          {statsErr && !statsLoading && (
+            <div className="p-5 bg-card border border-destructive/30 rounded-lg text-sm text-destructive">
+              Live data unavailable: {statsErr}
+            </div>
+          )}
+
+          {stats && !statsLoading && (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="p-5 bg-card border border-border rounded-lg">
+                  <ShoppingBag className="w-5 h-5 text-primary mb-3" />
+                  <div className="font-display text-3xl text-foreground">{stats.activeProducts}</div>
+                  <div className="text-sm text-muted-foreground">Active Stripe products</div>
+                </div>
+                <div className="p-5 bg-card border border-border rounded-lg">
+                  <Sparkles className="w-5 h-5 text-primary mb-3" />
+                  <div className="font-display text-3xl text-foreground">{stats.last30d.successfulPayments}</div>
+                  <div className="text-sm text-muted-foreground">Successful payments (30d)</div>
+                </div>
+                <div className="p-5 bg-card border border-border rounded-lg">
+                  <Sparkles className="w-5 h-5 text-primary mb-3" />
+                  <div className="font-display text-3xl text-foreground">
+                    {fmtMoney(stats.last30d.grossCents, stats.last30d.currency)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Gross revenue (30d)</div>
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-3">
+                Pulled live from Stripe at {new Date(stats.checkedAt).toLocaleString()}. Zero values are real zeros — no simulated numbers are ever shown.
+              </p>
+            </>
+          )}
+        </section>
+
         {/* Catalog snapshot — real Stripe prices */}
         <section className="mb-16">
           <div className="flex items-center gap-2 mb-6">
             <h2 className="font-display text-3xl text-foreground">LIVE CATALOG</h2>
             <AiBadge tool="Stripe" />
           </div>
+
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="p-5 bg-card border border-border rounded-lg">

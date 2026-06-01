@@ -34,6 +34,14 @@ export default function Store() {
     const status = params.get("status");
     if (status === "success") {
       toast.success("Payment complete — thank you!");
+      // GA4 conversion event (real conversion — fired only on Stripe success redirect)
+      if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
+        (window as any).gtag("event", "purchase", {
+          send_to: "G-28DS4V8XRT",
+          transaction_id: params.get("session_id") || `t_${Date.now()}`,
+          currency: "USD",
+        });
+      }
       setCart([]);
     } else if (status === "canceled") {
       toast("Checkout canceled.");
