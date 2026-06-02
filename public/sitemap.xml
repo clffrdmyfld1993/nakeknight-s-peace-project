@@ -9,4 +9,9 @@
   <url><loc>https://herodossier.lovable.app/social</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://herodossier.lovable.app/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://herodossier.lovable.app/press</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://herodossier.lovable.app/blog</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://herodossier.lovable.app/blog/what-is-an-ai-driven-business</loc><lastmod>2026-06-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://herodossier.lovable.app/blog/ai-driven-business-vs-ai-enabled-business</loc><lastmod>2026-06-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://herodossier.lovable.app/blog/nakeknight-build-log-from-prompt-to-stripe</loc><lastmod>2026-06-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://herodossier.lovable.app/blog/single-operator-ai-stack-2026</loc><lastmod>2026-06-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
