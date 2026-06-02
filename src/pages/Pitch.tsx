@@ -1,7 +1,14 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import SEO from "@/components/SEO";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bot, TrendingUp, Target, Users, Lightbulb, DollarSign, Rocket, Shield } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+type StripeStats = {
+  activeProducts: number;
+  last30d: { successfulPayments: number; grossCents: number; currency: string };
+  checkedAt: string;
+};
 
 // HARDCODED FACTS — no projected or simulated figures.
 const catalogFacts = [
@@ -45,6 +52,34 @@ export default function Pitch() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const [stats, setStats] = useState<StripeStats | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase.functions
+      .invoke<StripeStats>("stripe-stats")
+      .then(({ data, error }) => {
+        if (!cancelled && data && !error) setStats(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const liveCatalogFacts = stats
+    ? [
+        { label: "Digital SKUs live on Stripe (live)", value: String(stats.activeProducts) },
+        { label: "Successful payments — last 30d (live)", value: String(stats.last30d.successfulPayments) },
+        { label: "Outside capital raised", value: "$0" },
+      ]
+    : catalogFacts;
+
+  const liveTraction = stats
+    ? traction.map(t =>
+        t.metric === "Digital Products Live" ? { ...t, value: String(stats.activeProducts) } : t,
+      )
+    : traction;
+
+
 
   return (
     <div ref={containerRef} className="min-h-screen bg-background font-body pt-14">
@@ -128,7 +163,7 @@ export default function Pitch() {
             simulated market sizes.
           </p>
           <div className="grid md:grid-cols-3 gap-4">
-            {catalogFacts.map(s => (
+            {liveCatalogFacts.map(s => (
               <div key={s.label} className="p-6 bg-card border border-border rounded-lg text-center">
                 <div className="font-display text-5xl text-primary mb-1">{s.value}</div>
                 <div className="text-sm text-foreground">{s.label}</div>
@@ -147,7 +182,7 @@ export default function Pitch() {
             Outside capital raised to date: <span className="text-foreground">$0</span>. Everything live below was built and deployed using AI tooling.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {traction.map(t => (
+            {liveTraction.map(t => (
               <div key={t.metric} className="p-5 bg-card border border-border rounded-lg">
                 <div className="font-display text-4xl text-primary mb-1">{t.value}</div>
                 <div className="text-sm text-muted-foreground">{t.metric}</div>

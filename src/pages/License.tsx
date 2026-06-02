@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import SEO from "@/components/SEO";
-import { Shirt, BookOpen, Gamepad2, Film, Bot, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Shirt, BookOpen, Gamepad2, Film, Bot, ArrowRight, CheckCircle2, Send } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
+import { z } from "zod";
 
 const tiers = [
   {
@@ -62,8 +68,58 @@ const tiers = [
 ];
 
 const CONTACT_EMAIL = "afterglow619@proton.me";
+const TIER_NAMES = ["MERCHANDISE", "PUBLISHING", "GAMING", "FILM & MEDIA"] as const;
+
+const inquirySchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  company: z.string().trim().max(150).optional().or(z.literal("")),
+  email: z.string().trim().email("Valid email required").max(255),
+  tier: z.enum(TIER_NAMES, { errorMap: () => ({ message: "Pick a tier" }) }),
+  message: z.string().trim().min(10, "Tell us a bit more (min 10 chars)").max(2000),
+});
 
 export default function License() {
+  const [form, setForm] = useState({
+    name: "",
+    company: "",
+    email: "",
+    tier: "MERCHANDISE" as (typeof TIER_NAMES)[number],
+    message: "",
+  });
+  const [sending, setSending] = useState(false);
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    const parsed = inquirySchema.safeParse(form);
+    if (!parsed.success) {
+      const first = parsed.error.issues[0]?.message ?? "Invalid input";
+      toast({ title: "Check your inquiry", description: first, variant: "destructive" });
+      return;
+    }
+    setSending(true);
+    const d = parsed.data;
+    const subject = `NakeKnight™ ${d.tier} License Inquiry — ${d.name}`;
+    const body = [
+      `Name: ${d.name}`,
+      d.company ? `Company: ${d.company}` : null,
+      `Email: ${d.email}`,
+      `Tier: ${d.tier}`,
+      "",
+      "Message:",
+      d.message,
+      "",
+      "— Sent from herodossier.lovable.app/license",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = href;
+    setTimeout(() => {
+      setSending(false);
+      toast({ title: "Opening your email client", description: `Sending to ${CONTACT_EMAIL}` });
+    }, 400);
+  }
+
   return (
     <div className="min-h-screen bg-background font-body pt-14">
       <SEO
@@ -117,16 +173,102 @@ export default function License() {
                     </li>
                   ))}
                 </ul>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}?subject=NakeKnight™ ${tier.name} License Inquiry&body=I'm interested in the ${tier.name} licensing tier for NakeKnight™. Please send me more details.`}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForm(f => ({ ...f, tier: tier.name as (typeof TIER_NAMES)[number] }));
+                    document.getElementById("license-inquiry")?.scrollIntoView({ behavior: "smooth" });
+                  }}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-display text-sm tracking-wider rounded-sm hover:bg-primary/20 transition-colors"
                 >
                   REQUEST LICENSE <ArrowRight className="w-4 h-4" />
-                </a>
+                </button>
               </div>
             </motion.div>
           ))}
         </div>
+
+        {/* Inquiry form */}
+        <motion.div
+          id="license-inquiry"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-card border border-border rounded-lg p-8 md:p-10 mb-16 scroll-mt-24"
+        >
+          <h2 className="font-display text-4xl text-foreground mb-2">LICENSE INQUIRY</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            Submissions open your email client and send to{" "}
+            <span className="text-primary">{CONTACT_EMAIL}</span>. No data is stored on this site.
+          </p>
+          <form onSubmit={submit} className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="lic-name">Name *</Label>
+              <Input
+                id="lic-name"
+                value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                maxLength={100}
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="lic-company">Company / Studio</Label>
+              <Input
+                id="lic-company"
+                value={form.company}
+                onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
+                maxLength={150}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="lic-email">Email *</Label>
+              <Input
+                id="lic-email"
+                type="email"
+                value={form.email}
+                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                maxLength={255}
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="lic-tier">Tier *</Label>
+              <select
+                id="lic-tier"
+                value={form.tier}
+                onChange={e => setForm(f => ({ ...f, tier: e.target.value as (typeof TIER_NAMES)[number] }))}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {TIER_NAMES.map(t => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+            <div className="md:col-span-2 space-y-1.5">
+              <Label htmlFor="lic-msg">Project details *</Label>
+              <Textarea
+                id="lic-msg"
+                value={form.message}
+                onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                placeholder="Tell us about your project, scope, territories, and timeline."
+                rows={5}
+                maxLength={2000}
+                required
+              />
+            </div>
+            <div className="md:col-span-2">
+              <button
+                type="submit"
+                disabled={sending}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-display tracking-wider rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
+              >
+                <Send className="w-4 h-4" />
+                {sending ? "OPENING…" : "SEND INQUIRY"}
+              </button>
+            </div>
+          </form>
+        </motion.div>
 
         {/* Why License Section */}
         <motion.div
