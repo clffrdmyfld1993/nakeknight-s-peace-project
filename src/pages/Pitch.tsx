@@ -163,7 +163,7 @@ export default function Pitch() {
             simulated market sizes.
           </p>
           <div className="grid md:grid-cols-3 gap-4">
-            {catalogFacts.map(s => (
+            {liveCatalogFacts.map(s => (
               <div key={s.label} className="p-6 bg-card border border-border rounded-lg text-center">
                 <div className="font-display text-5xl text-primary mb-1">{s.value}</div>
                 <div className="text-sm text-foreground">{s.label}</div>
@@ -182,7 +182,7 @@ export default function Pitch() {
             Outside capital raised to date: <span className="text-foreground">$0</span>. Everything live below was built and deployed using AI tooling.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {traction.map(t => (
+            {liveTraction.map(t => (
               <div key={t.metric} className="p-5 bg-card border border-border rounded-lg">
                 <div className="font-display text-4xl text-primary mb-1">{t.value}</div>
                 <div className="text-sm text-muted-foreground">{t.metric}</div>
