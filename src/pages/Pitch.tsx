@@ -52,6 +52,34 @@ export default function Pitch() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const [stats, setStats] = useState<StripeStats | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase.functions
+      .invoke<StripeStats>("stripe-stats")
+      .then(({ data, error }) => {
+        if (!cancelled && data && !error) setStats(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const liveCatalogFacts = stats
+    ? [
+        { label: "Digital SKUs live on Stripe (live)", value: String(stats.activeProducts) },
+        { label: "Successful payments — last 30d (live)", value: String(stats.last30d.successfulPayments) },
+        { label: "Outside capital raised", value: "$0" },
+      ]
+    : catalogFacts;
+
+  const liveTraction = stats
+    ? traction.map(t =>
+        t.metric === "Digital Products Live" ? { ...t, value: String(stats.activeProducts) } : t,
+      )
+    : traction;
+
+
 
   return (
     <div ref={containerRef} className="min-h-screen bg-background font-body pt-14">
