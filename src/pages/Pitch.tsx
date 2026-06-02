@@ -1,7 +1,14 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import SEO from "@/components/SEO";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bot, TrendingUp, Target, Users, Lightbulb, DollarSign, Rocket, Shield } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+type StripeStats = {
+  activeProducts: number;
+  last30d: { successfulPayments: number; grossCents: number; currency: string };
+  checkedAt: string;
+};
 
 // HARDCODED FACTS — no projected or simulated figures.
 const catalogFacts = [
