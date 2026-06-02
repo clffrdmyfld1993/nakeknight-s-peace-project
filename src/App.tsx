@@ -15,6 +15,8 @@ import Analytics from "./pages/Analytics.tsx";
 import Coverage from "./pages/Coverage.tsx";
 import About from "./pages/About.tsx";
 import Press from "./pages/Press.tsx";
+import Blog from "./pages/Blog.tsx";
+import BlogPost from "./pages/BlogPost.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,8 @@ const App = () => (
           <Route path="/coverage" element={<Coverage />} />
           <Route path="/about" element={<About />} />
           <Route path="/press" element={<Press />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

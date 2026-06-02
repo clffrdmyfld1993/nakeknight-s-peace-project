@@ -15,6 +15,7 @@ const links = [
   { to: "/analytics", label: "INTEL" },
   { to: "/coverage", label: "COVERAGE" },
   { to: "/about", label: "ABOUT" },
+  { to: "/blog", label: "FIELD NOTES" },
   { to: "/press", label: "PRESS" },
 ];
 
