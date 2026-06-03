@@ -17,6 +17,7 @@ const links = [
   { to: "/about", label: "ABOUT" },
   { to: "/blog", label: "FIELD NOTES" },
   { to: "/press", label: "PRESS" },
+  { to: "/join", label: "JOIN" },
 ];
 
 export default function SiteNav() {
