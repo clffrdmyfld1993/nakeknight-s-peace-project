@@ -44,6 +44,51 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_serials: {
+        Row: {
+          audio_url: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          episode_number: number
+          id: string
+          is_published: boolean
+          release_date: string
+          title: string
+          transcript_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          audio_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          episode_number: number
+          id?: string
+          is_published?: boolean
+          release_date?: string
+          title: string
+          transcript_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audio_url?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          episode_number?: number
+          id?: string
+          is_published?: boolean
+          release_date?: string
+          title?: string
+          transcript_text?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
