@@ -16,6 +16,7 @@ const links = [
   { to: "/coverage", label: "COVERAGE" },
   { to: "/about", label: "ABOUT" },
   { to: "/blog", label: "FIELD NOTES" },
+  { to: "/chronicles", label: "CHRONICLES" },
   { to: "/press", label: "PRESS" },
   { to: "/join", label: "JOIN" },
 ];
