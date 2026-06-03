@@ -6,6 +6,7 @@ import Renderings from "./Renderings";
 import Testimonials from "./Testimonials";
 import BuiltByAI from "./BuiltByAI";
 import SEO from "./SEO";
+import LeadCapture from "./LeadCapture";
 
 const stats = [
   { label: "Disputes Resolved", value: "2,847", icon: Scale },
@@ -57,7 +58,7 @@ export default function HeroProfile() {
                 In a world torn by conflict, one man stands between chaos and resolution.
                 He doesn't fight with fists — he fights with <span className="text-primary font-medium">fairness</span>.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-3 mb-6">
                 <a
                   href="#case-files"
                   className="px-5 py-2.5 bg-primary text-primary-foreground font-display text-lg tracking-wider rounded-sm hover:bg-primary/90 transition-colors"
@@ -70,6 +71,10 @@ export default function HeroProfile() {
                 >
                   CONTACT
                 </a>
+              </div>
+              <div className="pt-4 border-t border-border/50">
+                <p className="text-xs font-display tracking-widest text-primary mb-2">FREE — AI BUILDER BLUEPRINT + LORE PDF</p>
+                <LeadCapture source="homepage-hero" compact />
               </div>
             </motion.div>
 
