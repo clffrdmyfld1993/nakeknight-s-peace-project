@@ -14,13 +14,14 @@ interface Serial {
   audio_url: string | null;
   release_date: string;
   is_published: boolean;
+  is_premium?: boolean;
 }
 
-const GATE_KEY = "nk_admin_gate";
+const TOKEN_KEY = "nk_admin_token";
 
 export default function AdminUpload() {
-  const [authed, setAuthed] = useState(false);
-  const [pass, setPass] = useState("");
+  const [token, setToken] = useState<string>("");
+  const [tokenInput, setTokenInput] = useState("");
   const [episodes, setEpisodes] = useState<Serial[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -33,42 +34,59 @@ export default function AdminUpload() {
     new Date().toISOString().slice(0, 16)
   );
   const [isPublished, setIsPublished] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState("");
 
   useEffect(() => {
-    if (sessionStorage.getItem(GATE_KEY) === "1") setAuthed(true);
+    const saved = sessionStorage.getItem(TOKEN_KEY);
+    if (saved) setToken(saved);
   }, []);
 
   useEffect(() => {
-    if (authed) refresh();
-  }, [authed]);
+    if (token) refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const callAdmin = async (body: any) => {
+    const { data, error } = await supabase.functions.invoke("admin-serials", {
+      body,
+      headers: { "x-admin-token": token },
+    });
+    if (error) throw new Error(error.message || "Request failed");
+    if ((data as any)?.error) throw new Error((data as any).error);
+    return data as any;
+  };
 
   const refresh = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("weekly_serials")
-      .select("*")
-      .order("episode_number", { ascending: false });
-    setEpisodes((data as Serial[]) || []);
-    // Suggest next episode number
-    if (data && data.length > 0) {
-      setEpisodeNumber(Math.max(...data.map((d) => d.episode_number)) + 1);
+    try {
+      const res = await callAdmin({ action: "list" });
+      const rows = (res?.rows || []) as Serial[];
+      // newest first for display
+      const sorted = [...rows].sort((a, b) => b.episode_number - a.episode_number);
+      setEpisodes(sorted);
+      if (rows.length > 0) {
+        setEpisodeNumber(Math.max(...rows.map((d) => d.episode_number)) + 1);
+      }
+    } catch (err: any) {
+      toast({ title: "Auth failed", description: err.message, variant: "destructive" });
+      sessionStorage.removeItem(TOKEN_KEY);
+      setToken("");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGate = (e: React.FormEvent) => {
     e.preventDefault();
-    // Soft gate — table writes still require service role / SQL,
-    // so this is just to hide the UI from casual visitors.
-    if (pass.trim().length >= 4) {
-      sessionStorage.setItem(GATE_KEY, "1");
-      setAuthed(true);
-    } else {
-      toast({ title: "Invalid passphrase", variant: "destructive" });
+    if (tokenInput.trim().length < 8) {
+      toast({ title: "Token must be ≥8 chars", variant: "destructive" });
+      return;
     }
+    sessionStorage.setItem(TOKEN_KEY, tokenInput.trim());
+    setToken(tokenInput.trim());
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,43 +100,50 @@ export default function AdminUpload() {
       let audioPath: string | null = null;
 
       if (file) {
-        setProgress("Uploading audio to storage…");
-        const ext = file.name.split(".").pop() || "mp3";
+        setProgress("Requesting signed upload URL…");
+        const ext = (file.name.split(".").pop() || "mp3").toLowerCase();
         const safe = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40);
         const path = `ep-${String(episodeNumber).padStart(2, "0")}-${safe}-${Date.now()}.${ext}`;
+        const signed = await callAdmin({ action: "signed_upload", path });
+
+        setProgress("Uploading audio…");
+        // Use the official client helper to honor the signed token
         const { error: upErr } = await supabase.storage
           .from("chronicles")
-          .upload(path, file, {
-            cacheControl: "3600",
-            upsert: false,
+          .uploadToSignedUrl(signed.path, signed.token, file, {
             contentType: file.type || "audio/mpeg",
+            upsert: false,
           });
         if (upErr) throw upErr;
-        audioPath = path;
+        audioPath = signed.path;
       }
 
       setProgress("Saving episode row…");
-      const { error: insErr } = await supabase.from("weekly_serials").insert({
-        title: title.trim(),
-        episode_number: episodeNumber,
-        description: description.trim() || null,
-        transcript_text: transcript.trim() || null,
-        audio_url: audioPath,
-        release_date: new Date(releaseDate).toISOString(),
-        is_published: isPublished,
+      await callAdmin({
+        action: "create",
+        data: {
+          title: title.trim(),
+          episode_number: episodeNumber,
+          description: description.trim() || null,
+          transcript_text: transcript.trim() || null,
+          audio_url: audioPath,
+          release_date: new Date(releaseDate).toISOString(),
+          is_published: isPublished,
+          is_premium: isPremium,
+        },
       });
-      if (insErr) throw insErr;
 
       toast({ title: "Episode saved", description: `EP ${episodeNumber} — ${title}` });
       setTitle("");
       setDescription("");
       setTranscript("");
       setFile(null);
+      setIsPremium(false);
       await refresh();
     } catch (err: any) {
       toast({
-        title: "Upload failed",
-        description: err?.message || "Check RLS policies — inserts may be blocked.",
+        title: "Save failed",
+        description: err?.message || "Unknown error",
         variant: "destructive",
       });
     } finally {
@@ -128,31 +153,42 @@ export default function AdminUpload() {
   };
 
   const togglePublish = async (ep: Serial) => {
-    const { error } = await supabase
-      .from("weekly_serials")
-      .update({ is_published: !ep.is_published })
-      .eq("id", ep.id);
-    if (error) {
-      toast({ title: "Update blocked", description: error.message, variant: "destructive" });
-    } else {
+    try {
+      await callAdmin({
+        action: "update",
+        id: ep.id,
+        data: { is_published: !ep.is_published },
+      });
       refresh();
+    } catch (err: any) {
+      toast({ title: "Update failed", description: err.message, variant: "destructive" });
+    }
+  };
+
+  const togglePremium = async (ep: Serial) => {
+    try {
+      await callAdmin({
+        action: "update",
+        id: ep.id,
+        data: { is_premium: !ep.is_premium },
+      });
+      refresh();
+    } catch (err: any) {
+      toast({ title: "Update failed", description: err.message, variant: "destructive" });
     }
   };
 
   const remove = async (ep: Serial) => {
     if (!confirm(`Delete EP ${ep.episode_number} — ${ep.title}?`)) return;
-    if (ep.audio_url && !ep.audio_url.startsWith("http")) {
-      await supabase.storage.from("chronicles").remove([ep.audio_url]);
-    }
-    const { error } = await supabase.from("weekly_serials").delete().eq("id", ep.id);
-    if (error) {
-      toast({ title: "Delete blocked", description: error.message, variant: "destructive" });
-    } else {
+    try {
+      await callAdmin({ action: "delete", id: ep.id });
       refresh();
+    } catch (err: any) {
+      toast({ title: "Delete failed", description: err.message, variant: "destructive" });
     }
   };
 
-  if (!authed) {
+  if (!token) {
     return (
       <div className="min-h-screen bg-background font-body pt-14 flex items-center justify-center px-6">
         <SEO title="Admin — NakeKnight" description="Restricted." path="/admin-upload" />
@@ -163,13 +199,15 @@ export default function AdminUpload() {
           <Lock className="w-5 h-5 text-primary mb-4" />
           <h1 className="font-display text-2xl mb-1">ADMIN CONSOLE</h1>
           <p className="text-sm text-muted-foreground mb-6">
-            Soft-gated. Enter any passphrase (≥4 chars) to reveal the upload UI.
+            Enter the <code className="text-primary">ADMIN_TOKEN</code> secret. All writes go
+            through the service-role <code className="text-primary">admin-serials</code> edge
+            function — the public <code>weekly_serials</code> table stays locked.
           </p>
           <input
             type="password"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-            placeholder="Passphrase"
+            value={tokenInput}
+            onChange={(e) => setTokenInput(e.target.value)}
+            placeholder="Admin token"
             className="w-full px-3 py-2 bg-background border border-border rounded-sm text-sm mb-3 focus:outline-none focus:border-primary"
           />
           <button
@@ -178,12 +216,6 @@ export default function AdminUpload() {
           >
             UNLOCK
           </button>
-          <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed">
-            Note: real write protection lives in database RLS — this gate only hides the form. To
-            allow writes from this page, you must add INSERT/UPDATE/DELETE policies on
-            <code className="text-primary"> weekly_serials</code> or call from a service-role edge
-            function.
-          </p>
         </form>
       </div>
     );
@@ -197,11 +229,11 @@ export default function AdminUpload() {
           <p className="text-primary font-display tracking-[0.3em] text-xs mb-2">CHRONICLES · ADMIN</p>
           <h1 className="font-display text-4xl md:text-5xl mb-2">EPISODE UPLOAD</h1>
           <p className="text-muted-foreground text-sm mb-10">
-            Upload MP3 + transcript and publish a new chapter of the saga.
+            Upload MP3 + transcript and publish a new chapter of the saga. All writes go
+            through a service-role edge function authenticated by ADMIN_TOKEN.
           </p>
         </motion.div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="p-6 md:p-8 bg-card/60 border border-border rounded-lg space-y-5 mb-12"
@@ -275,15 +307,26 @@ export default function AdminUpload() {
             </div>
           </div>
 
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={isPublished}
-              onChange={(e) => setIsPublished(e.target.checked)}
-              className="accent-primary"
-            />
-            <span>Publish immediately</span>
-          </label>
+          <div className="flex flex-wrap items-center gap-6 text-sm">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={isPublished}
+                onChange={(e) => setIsPublished(e.target.checked)}
+                className="accent-primary"
+              />
+              <span>Publish immediately</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={isPremium}
+                onChange={(e) => setIsPremium(e.target.checked)}
+                className="accent-primary"
+              />
+              <span>Premium-only episode</span>
+            </label>
+          </div>
 
           <button
             type="submit"
@@ -295,7 +338,6 @@ export default function AdminUpload() {
           </button>
         </form>
 
-        {/* Existing episodes */}
         <h2 className="font-display text-xl mb-4 tracking-widest">EXISTING EPISODES</h2>
         {loading ? (
           <p className="text-muted-foreground text-sm">Loading…</p>
@@ -311,6 +353,7 @@ export default function AdminUpload() {
                 <div className="min-w-0">
                   <p className="text-xs font-display tracking-widest text-primary">
                     EP {String(ep.episode_number).padStart(2, "0")}
+                    {ep.is_premium ? " · PREMIUM" : ""}
                   </p>
                   <p className="text-sm font-medium truncate">{ep.title}</p>
                   <p className="text-[11px] text-muted-foreground">
@@ -324,6 +367,17 @@ export default function AdminUpload() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => togglePremium(ep)}
+                    title="Toggle premium"
+                    className={`px-2 py-1 text-[10px] font-display tracking-widest border rounded-sm ${
+                      ep.is_premium
+                        ? "bg-primary/20 text-primary border-primary/40"
+                        : "text-muted-foreground border-border hover:text-primary"
+                    }`}
+                  >
+                    PREMIUM
+                  </button>
                   <button
                     onClick={() => togglePublish(ep)}
                     title="Toggle publish"
@@ -344,22 +398,18 @@ export default function AdminUpload() {
           </div>
         )}
 
-        {/* Instructions */}
         <div className="mt-12 p-6 bg-muted/30 border border-border rounded-lg text-sm leading-relaxed">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle2 className="w-4 h-4 text-primary" />
             <h3 className="font-display tracking-widest">WEEKLY WORKFLOW</h3>
           </div>
           <ol className="list-decimal list-inside space-y-1.5 text-muted-foreground">
-            <li>Generate your MP3 + transcript with your AI pipeline.</li>
-            <li>Open <code className="text-primary">/admin-upload</code> and unlock the console.</li>
-            <li>Fill in title, episode number, description, transcript, and release date.</li>
-            <li>Pick the MP3 — it uploads to the private <code className="text-primary">chronicles</code> bucket and the public page streams it via signed URLs.</li>
-            <li>Toggle <strong>Publish immediately</strong> off if you want it to drop on schedule via the release date.</li>
+            <li>Generate the MP3 + transcript with your AI pipeline.</li>
+            <li>Open <code className="text-primary">/admin-upload</code> and paste your ADMIN_TOKEN.</li>
+            <li>Fill in title, episode #, description, transcript, release date.</li>
+            <li>Pick the MP3 — the edge function returns a signed upload URL, the file lands in the private <code className="text-primary">chronicles</code> bucket, and the public page streams it via short-lived signed URLs.</li>
+            <li>Toggle <strong>Premium-only</strong> to gate it behind the Chronicles paywall.</li>
           </ol>
-          <p className="text-[11px] text-muted-foreground mt-4">
-            If saving fails with a permissions error, the <code>weekly_serials</code> table has no public write policies (by design). Either run inserts via SQL / a service-role edge function, or add a temporary admin policy.
-          </p>
         </div>
       </div>
     </div>
