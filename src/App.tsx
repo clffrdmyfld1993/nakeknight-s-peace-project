@@ -19,6 +19,7 @@ import Blog from "./pages/Blog.tsx";
 import BlogPost from "./pages/BlogPost.tsx";
 import Join from "./pages/Join.tsx";
 import Chronicles from "./pages/Chronicles.tsx";
+import AdminUpload from "./pages/AdminUpload.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
