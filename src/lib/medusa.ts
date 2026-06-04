@@ -18,6 +18,17 @@ export interface Product {
 // Mock products used until Medusa is connected
 export const mockProducts: Product[] = [
   {
+    id: "prod_case_files",
+    title: "The Complete NakeKnight Case Files & AI Prompts",
+    description: "Every case file, the lore bible, character sheets, world-building notes, and the full library of AI prompts used to build the universe (image, audio, video, copy). Instant digital download.",
+    thumbnail: "/placeholder.svg",
+    price: 15.00,
+    priceFormatted: "$15.00",
+    category: "Lore",
+    badge: "FLAGSHIP",
+    stripePriceId: "price_1TePGgQaKvygaDfu3DJTEJm4",
+  },
+  {
     id: "prod_001",
     title: "The Iron Pact — Digital Comic #1",
     description: "The full illustrated story of NakeKnight's first case. 48 pages of AI-generated artwork and hand-crafted narrative.",

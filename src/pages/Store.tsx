@@ -72,10 +72,14 @@ export default function Store() {
       toast.error("This item isn't available for purchase yet.");
       return;
     }
+    const referral =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("ref")
+        : null;
     setLoading(key);
     try {
       const { data, error } = await supabase.functions.invoke("create-payment", {
-        body: { items: payload },
+        body: { items: payload, referral, source: "store" },
       });
       if (error) throw error;
       if (data?.url) {

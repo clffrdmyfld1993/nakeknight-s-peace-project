@@ -15,7 +15,9 @@ const PRICE_IDS = new Set<string>([
   "price_1TXeo8QaKvygaDfuLrhyzP8Q", // Wallpaper Pack
   "price_1TXeqHQaKvygaDfuwx5nOZ87", // Ashen Accord comic
   "price_1TXevvQaKvygaDfuxBJrXkCG", // Soundtrack
+  "price_1TePGgQaKvygaDfu3DJTEJm4", // Complete Case Files & AI Prompts ($15)
 ]);
+
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -29,6 +31,14 @@ serve(async (req) => {
     )
       ? body.items
       : [];
+    const referral =
+      typeof body?.referral === "string" && body.referral.length <= 120
+        ? body.referral
+        : null;
+    const source =
+      typeof body?.source === "string" && body.source.length <= 120
+        ? body.source
+        : "store";
 
     const lineItems = items
       .filter((i) => i && typeof i.price === "string" && PRICE_IDS.has(i.price))
@@ -52,9 +62,14 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: lineItems,
-      success_url: `${origin}/store?status=success`,
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/store?status=canceled`,
+      metadata: {
+        ...(referral ? { referral_code: referral } : {}),
+        source,
+      },
     });
+
 
     return new Response(JSON.stringify({ url: session.url }), {
       status: 200,
