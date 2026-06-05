@@ -53,6 +53,7 @@ export type Database = {
           duration_seconds: number | null
           episode_number: number
           id: string
+          is_premium: boolean
           is_published: boolean
           release_date: string
           title: string
@@ -67,6 +68,7 @@ export type Database = {
           duration_seconds?: number | null
           episode_number: number
           id?: string
+          is_premium?: boolean
           is_published?: boolean
           release_date?: string
           title: string
@@ -81,6 +83,7 @@ export type Database = {
           duration_seconds?: number | null
           episode_number?: number
           id?: string
+          is_premium?: boolean
           is_published?: boolean
           release_date?: string
           title?: string
