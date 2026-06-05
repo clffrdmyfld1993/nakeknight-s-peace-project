@@ -20,6 +20,7 @@ import BlogPost from "./pages/BlogPost.tsx";
 import Join from "./pages/Join.tsx";
 import Chronicles from "./pages/Chronicles.tsx";
 import AdminUpload from "./pages/AdminUpload.tsx";
+import Success from "./pages/Success.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
           <Route path="/join" element={<Join />} />
           <Route path="/chronicles" element={<Chronicles />} />
           <Route path="/admin-upload" element={<AdminUpload />} />
+          <Route path="/success" element={<Success />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
