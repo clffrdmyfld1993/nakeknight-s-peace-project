@@ -6,6 +6,10 @@ verify_jwt = false
 [functions.admin-serials]
 verify_jwt = false
 
+[functions.fulfill-purchase]
+verify_jwt = false
+
+
 
 [functions.gsc-analytics]
 verify_jwt = false

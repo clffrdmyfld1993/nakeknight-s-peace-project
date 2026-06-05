@@ -16,6 +16,7 @@ const PRICE_IDS = new Set<string>([
   "price_1TXeqHQaKvygaDfuwx5nOZ87", // Ashen Accord comic
   "price_1TXevvQaKvygaDfuxBJrXkCG", // Soundtrack
   "price_1TePGgQaKvygaDfu3DJTEJm4", // Complete Case Files & AI Prompts ($15)
+  "price_1TelQGQaKvygaDfuazPCyTBv", // Premium Chronicles — Lifetime ($29)
 ]);
 
 
