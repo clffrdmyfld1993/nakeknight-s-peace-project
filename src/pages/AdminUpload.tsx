@@ -384,6 +384,61 @@ export default function AdminUpload() {
           </button>
         </form>
 
+        <div className="p-6 md:p-8 bg-card/60 border border-primary/30 rounded-lg space-y-4 mb-12">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <h2 className="font-display tracking-widest text-sm">AI CONTENT FACTORY</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Text: Lovable AI (Gemini, free tier). Audio: any OpenAI-compatible TTS pointed at{" "}
+            <code className="text-primary">CUSTOM_TTS_BASE_URL</code> — e.g. a Kokoro-FastAPI
+            instance or HuggingFace Space exposing <code>/v1/audio/speech</code>. Episode # uses the
+            value from the form above ({episodeNumber}).
+          </p>
+          <textarea
+            value={aiPrompt}
+            onChange={(e) => setAiPrompt(e.target.value)}
+            rows={3}
+            placeholder="A theme or brief. e.g. 'A rain-soaked Brooklyn rooftop. Knight finds a child's mask pinned to a fire-escape with a single gold coin.'"
+            className="w-full px-3 py-2 bg-background border border-border rounded-sm text-sm focus:outline-none focus:border-primary"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label className="font-display text-[11px] tracking-widest text-muted-foreground">TTS VOICE</label>
+              <input
+                value={aiVoice}
+                onChange={(e) => setAiVoice(e.target.value)}
+                placeholder="af_bella"
+                className="mt-1 w-full px-3 py-2 bg-background border border-border rounded-sm text-sm focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div className="flex items-end gap-4 text-sm">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" checked={aiAudio} onChange={(e) => setAiAudio(e.target.checked)} className="accent-primary" />
+                <span>Generate audio</span>
+              </label>
+            </div>
+            <div className="flex items-end gap-4 text-sm">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" checked={aiPublish} onChange={(e) => setAiPublish(e.target.checked)} className="accent-primary" />
+                <span>Publish</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input type="checkbox" checked={aiPremium} onChange={(e) => setAiPremium(e.target.checked)} className="accent-primary" />
+                <span>Premium</span>
+              </label>
+            </div>
+          </div>
+          <button
+            onClick={runAiGenerate}
+            disabled={aiBusy}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-display tracking-widest text-sm rounded-sm hover:opacity-90 disabled:opacity-50"
+          >
+            {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            {aiBusy ? "GENERATING…" : "GENERATE EPISODE"}
+          </button>
+        </div>
+
         <h2 className="font-display text-xl mb-4 tracking-widest">EXISTING EPISODES</h2>
         {loading ? (
           <p className="text-muted-foreground text-sm">Loading…</p>
