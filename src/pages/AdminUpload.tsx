@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Upload, Lock, CheckCircle2, Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 import SEO from "@/components/SEO";
@@ -38,6 +39,51 @@ export default function AdminUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState("");
+
+  // AI generator state
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiVoice, setAiVoice] = useState("af_bella");
+  const [aiAudio, setAiAudio] = useState(true);
+  const [aiPublish, setAiPublish] = useState(false);
+  const [aiPremium, setAiPremium] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+
+  const runAiGenerate = async () => {
+    if (aiPrompt.trim().length < 4) {
+      toast({ title: "Give the engine a prompt", variant: "destructive" });
+      return;
+    }
+    setAiBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-episode", {
+        body: {
+          prompt: aiPrompt.trim(),
+          episode_number: episodeNumber,
+          voice: aiVoice || undefined,
+          generate_audio: aiAudio,
+          publish: aiPublish,
+          premium: aiPremium,
+        },
+        headers: { "x-admin-token": token },
+      });
+      if (error) throw new Error(error.message);
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast({
+        title: "Episode generated",
+        description: `EP ${episodeNumber} — ${(data as any).row?.title}${
+          (data as any).hadAudio ? " · audio ✓" : " · text only"
+        }`,
+      });
+      setAiPrompt("");
+      await refresh();
+    } catch (err: any) {
+      toast({ title: "AI generate failed", description: err.message, variant: "destructive" });
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+
 
   useEffect(() => {
     const saved = sessionStorage.getItem(TOKEN_KEY);
