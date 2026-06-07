@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Upload, Lock, CheckCircle2, Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 import SEO from "@/components/SEO";
@@ -38,6 +39,51 @@ export default function AdminUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState("");
+
+  // AI generator state
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiVoice, setAiVoice] = useState("af_bella");
+  const [aiAudio, setAiAudio] = useState(true);
+  const [aiPublish, setAiPublish] = useState(false);
+  const [aiPremium, setAiPremium] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+
+  const runAiGenerate = async () => {
+    if (aiPrompt.trim().length < 4) {
+      toast({ title: "Give the engine a prompt", variant: "destructive" });
+      return;
+    }
+    setAiBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-episode", {
+        body: {
+          prompt: aiPrompt.trim(),
+          episode_number: episodeNumber,
+          voice: aiVoice || undefined,
+          generate_audio: aiAudio,
+          publish: aiPublish,
+          premium: aiPremium,
+        },
+        headers: { "x-admin-token": token },
+      });
+      if (error) throw new Error(error.message);
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast({
+        title: "Episode generated",
+        description: `EP ${episodeNumber} — ${(data as any).row?.title}${
+          (data as any).hadAudio ? " · audio ✓" : " · text only"
+        }`,
+      });
+      setAiPrompt("");
+      await refresh();
+    } catch (err: any) {
+      toast({ title: "AI generate failed", description: err.message, variant: "destructive" });
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+
 
   useEffect(() => {
     const saved = sessionStorage.getItem(TOKEN_KEY);
@@ -337,6 +383,61 @@ export default function AdminUpload() {
             {submitting ? progress || "WORKING…" : "SAVE EPISODE"}
           </button>
         </form>
+
+        <div className="p-6 md:p-8 bg-card/60 border border-primary/30 rounded-lg space-y-4 mb-12">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <h2 className="font-display tracking-widest text-sm">AI CONTENT FACTORY</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Text: Lovable AI (Gemini, free tier). Audio: any OpenAI-compatible TTS pointed at{" "}
+            <code className="text-primary">CUSTOM_TTS_BASE_URL</code> — e.g. a Kokoro-FastAPI
+            instance or HuggingFace Space exposing <code>/v1/audio/speech</code>. Episode # uses the
+            value from the form above ({episodeNumber}).
+          </p>
+          <textarea
+            value={aiPrompt}
+            onChange={(e) => setAiPrompt(e.target.value)}
+            rows={3}
+            placeholder="A theme or brief. e.g. 'A rain-soaked Brooklyn rooftop. Knight finds a child's mask pinned to a fire-escape with a single gold coin.'"
+            className="w-full px-3 py-2 bg-background border border-border rounded-sm text-sm focus:outline-none focus:border-primary"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label className="font-display text-[11px] tracking-widest text-muted-foreground">TTS VOICE</label>
+              <input
+                value={aiVoice}
+                onChange={(e) => setAiVoice(e.target.value)}
+                placeholder="af_bella"
+                className="mt-1 w-full px-3 py-2 bg-background border border-border rounded-sm text-sm focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div className="flex items-end gap-4 text-sm">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" checked={aiAudio} onChange={(e) => setAiAudio(e.target.checked)} className="accent-primary" />
+                <span>Generate audio</span>
+              </label>
+            </div>
+            <div className="flex items-end gap-4 text-sm">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" checked={aiPublish} onChange={(e) => setAiPublish(e.target.checked)} className="accent-primary" />
+                <span>Publish</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input type="checkbox" checked={aiPremium} onChange={(e) => setAiPremium(e.target.checked)} className="accent-primary" />
+                <span>Premium</span>
+              </label>
+            </div>
+          </div>
+          <button
+            onClick={runAiGenerate}
+            disabled={aiBusy}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-display tracking-widest text-sm rounded-sm hover:opacity-90 disabled:opacity-50"
+          >
+            {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            {aiBusy ? "GENERATING…" : "GENERATE EPISODE"}
+          </button>
+        </div>
 
         <h2 className="font-display text-xl mb-4 tracking-widest">EXISTING EPISODES</h2>
         {loading ? (
