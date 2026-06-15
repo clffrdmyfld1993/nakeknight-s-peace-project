@@ -29,6 +29,8 @@ const BodySchema = z.object({
   publish: z.boolean().optional(),
   premium: z.boolean().optional(),
   generate_audio: z.boolean().optional(),
+  count: z.number().int().min(1).max(8).optional(),
+  weekly_offset: z.boolean().optional(),
 });
 
 serve(async (req) => {
@@ -43,7 +45,15 @@ serve(async (req) => {
 
   const parsed = BodySchema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) return json({ error: "Invalid body", details: parsed.error.flatten() }, 400);
-  const { prompt, episode_number, publish = true, premium = false, generate_audio = true } = parsed.data;
+  const {
+    prompt,
+    episode_number,
+    publish = true,
+    premium = false,
+    generate_audio = true,
+    count = 1,
+    weekly_offset = false,
+  } = parsed.data;
 
   const sb = createClient(
     Deno.env.get("SUPABASE_URL")!,
