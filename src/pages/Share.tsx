@@ -52,7 +52,7 @@ export default function Share() {
 
   const copy = async (text: string) => {
     const final = ref.trim()
-      ? text.replaceAll(`${SITE}/chronicles`, buildRef(`${SITE}/chronicles`))
+      ? text.split(`${SITE}/chronicles`).join(buildRef(`${SITE}/chronicles`))
       : text;
     try {
       await navigator.clipboard.writeText(final);
