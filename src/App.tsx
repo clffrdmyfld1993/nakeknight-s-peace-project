@@ -4,6 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SiteNav from "./components/SiteNav";
+import SiteFooter from "./components/SiteFooter";
+import { HelmetProvider } from "react-helmet-async";
+import Share from "./pages/Share.tsx";
 import Index from "./pages/Index.tsx";
 import Command from "./pages/Command.tsx";
 import Store from "./pages/Store.tsx";
@@ -27,34 +30,38 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <SiteNav />
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/command" element={<Command />} />
-          <Route path="/store" element={<Store />} />
-          <Route path="/license" element={<License />} />
-          <Route path="/pitch" element={<Pitch />} />
-          <Route path="/costumes" element={<Costumes />} />
-          <Route path="/social" element={<Social />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/coverage" element={<Coverage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/press" element={<Press />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/join" element={<Join />} />
-          <Route path="/chronicles" element={<Chronicles />} />
-          <Route path="/admin-upload" element={<AdminUpload />} />
-          <Route path="/success" element={<Success />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <HelmetProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <SiteNav />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/command" element={<Command />} />
+            <Route path="/store" element={<Store />} />
+            <Route path="/license" element={<License />} />
+            <Route path="/pitch" element={<Pitch />} />
+            <Route path="/costumes" element={<Costumes />} />
+            <Route path="/social" element={<Social />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/coverage" element={<Coverage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/press" element={<Press />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/chronicles" element={<Chronicles />} />
+            <Route path="/share" element={<Share />} />
+            <Route path="/admin-upload" element={<AdminUpload />} />
+            <Route path="/success" element={<Success />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <SiteFooter />
+        </BrowserRouter>
+      </TooltipProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 
