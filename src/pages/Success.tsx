@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle2, Download, Loader2, AlertTriangle, ArrowRight, Headphones } from "lucide-react";
+import { CheckCircle2, Download, Loader2, AlertTriangle, ArrowRight, Headphones, Gift } from "lucide-react";
 import SEO from "@/components/SEO";
+import ShareButtons from "@/components/ShareButtons";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Fulfillment {
@@ -152,6 +153,37 @@ export default function Success() {
                 Payment received — but no automatic fulfillment is configured for these items. We'll be in touch shortly.
               </p>
             )}
+
+            <div className="mt-8 p-6 bg-primary/10 border border-primary/30 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Gift className="w-4 h-4 text-primary" />
+                <p className="font-display tracking-widest text-xs text-primary">SHARE FOR BONUS LORE</p>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Post your receipt + share NakeKnight with one friend and we'll send you an exclusive backstory file.
+              </p>
+              <ShareButtons
+                url="/chronicles"
+                text="Just unlocked NAKEKNIGHT CHRONICLES — a serialized audio drama built entirely with AI 🎙️"
+                refCode={data.referral_code || sessionId.slice(-8)}
+                compact
+              />
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                to="/chronicles"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-display tracking-widest text-sm rounded-sm hover:opacity-90"
+              >
+                CONTINUE TO CHRONICLES <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to="/store"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-card border border-border text-foreground font-display tracking-widest text-sm rounded-sm hover:border-primary/40"
+              >
+                BROWSE MORE DROPS
+              </Link>
+            </div>
 
             <details className="mt-12 text-xs text-muted-foreground">
               <summary className="cursor-pointer">Session reference</summary>

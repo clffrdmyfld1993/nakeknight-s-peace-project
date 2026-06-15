@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SiteNav from "./components/SiteNav";
+import SiteFooter from "./components/SiteFooter";
+import Share from "./pages/Share.tsx";
 import Index from "./pages/Index.tsx";
 import Command from "./pages/Command.tsx";
 import Store from "./pages/Store.tsx";
@@ -48,11 +50,13 @@ const App = () => (
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/join" element={<Join />} />
           <Route path="/chronicles" element={<Chronicles />} />
+          <Route path="/share" element={<Share />} />
           <Route path="/admin-upload" element={<AdminUpload />} />
           <Route path="/success" element={<Success />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <SiteFooter />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

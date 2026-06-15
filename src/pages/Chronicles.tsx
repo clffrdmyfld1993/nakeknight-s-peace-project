@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Lock, Calendar, Headphones, ChevronDown, ChevronUp, Sparkles, Loader2 } from "lucide-react";
 import SEO from "@/components/SEO";
 import AudioPlayer from "@/components/AudioPlayer";
+import ShareButtons from "@/components/ShareButtons";
+import LeadCapture from "@/components/LeadCapture";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -178,6 +180,11 @@ const EpisodeCard = ({ ep, premiumSession }: { ep: Episode; premiumSession: stri
           )}
         </div>
       )}
+
+      <ShareButtons
+        url={`/chronicles#ep-${ep.episode_number}`}
+        text={`🎙️ NAKEKNIGHT EP${ep.episode_number.toString().padStart(2, "0")} — ${ep.title}`}
+      />
     </motion.article>
   );
 };
@@ -214,8 +221,29 @@ export default function Chronicles() {
     <div className="min-h-screen bg-background font-body pt-14 relative">
       <SEO
         title="Chronicles — NakeKnight™ Weekly Audio Drama"
-        description="A serialized audio saga from the NakeKnight universe. New episode every week — fully AI-built scripts, voice, and score."
+        description="Serialized audio drama from the NakeKnight universe. New episode every week — fully AI-built scripts, voice, and score. Free starters + $29 lifetime premium access."
         path="/chronicles"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "PodcastSeries",
+            name: "NakeKnight Chronicles",
+            url: "https://herodossier.lovable.app/chronicles",
+            description:
+              "Serialized audio drama following NakeKnight — The Peacemaker — an empathic mediator navigating a staged reality. Built entirely by AI.",
+            author: { "@type": "Organization", name: "NakeKnight" },
+            inLanguage: "en",
+          },
+          ...released.slice(0, 20).map((e) => ({
+            "@context": "https://schema.org",
+            "@type": "PodcastEpisode",
+            name: `EP ${e.episode_number.toString().padStart(2, "0")} — ${e.title}`,
+            description: e.description ?? undefined,
+            datePublished: e.release_date,
+            url: `https://herodossier.lovable.app/chronicles#ep-${e.episode_number}`,
+            partOfSeries: { "@type": "PodcastSeries", name: "NakeKnight Chronicles" },
+          })),
+        ]}
       />
 
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -290,7 +318,22 @@ export default function Chronicles() {
           </div>
         )}
 
-        <div className="mt-16 text-center text-[10px] tracking-[0.3em] text-muted-foreground">
+        <div className="mt-16 p-6 md:p-8 bg-card/60 border border-primary/30 rounded-lg">
+          <p className="font-display tracking-widest text-xs text-primary mb-2">EPISODE ALERTS</p>
+          <h3 className="font-display text-2xl text-foreground mb-2">Get new chapters + exclusive lore</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            One email per drop. No spam. Unsubscribe any time.
+          </p>
+          <LeadCapture
+            source="chronicles"
+            magnet="Chronicles Drop Alerts"
+            buttonLabel="ALERT ME"
+            successMessage="You're on the list. Next drop will hit your inbox."
+            compact
+          />
+        </div>
+
+        <div className="mt-12 text-center text-[10px] tracking-[0.3em] text-muted-foreground">
           NEW CHAPTER · EVERY WEEK · BUILT BY AI
         </div>
       </div>

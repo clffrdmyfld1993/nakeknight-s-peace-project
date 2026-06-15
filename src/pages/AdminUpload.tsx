@@ -46,7 +46,10 @@ export default function AdminUpload() {
   const [aiAudio, setAiAudio] = useState(true);
   const [aiPublish, setAiPublish] = useState(false);
   const [aiPremium, setAiPremium] = useState(false);
+  const [aiCount, setAiCount] = useState(1);
+  const [aiWeekly, setAiWeekly] = useState(true);
   const [aiBusy, setAiBusy] = useState(false);
+  const [lastShareText, setLastShareText] = useState<string>("");
 
   const runAiGenerate = async () => {
     if (aiPrompt.trim().length < 4) {
@@ -63,23 +66,47 @@ export default function AdminUpload() {
           generate_audio: aiAudio,
           publish: aiPublish,
           premium: aiPremium,
+          count: Math.max(1, Math.min(8, aiCount)),
+          weekly_offset: aiCount > 1 ? aiWeekly : false,
         },
         headers: { "x-admin-token": token },
       });
       if (error) throw new Error(error.message);
       if ((data as any)?.error) throw new Error((data as any).error);
+
+      const gen = (data as any).generated ?? ((data as any).row ? 1 : 0);
+      const first = (data as any).results?.[0] ?? data;
+      const title = first?.title || first?.row?.title || "Episode";
       toast({
-        title: "Episode generated",
-        description: `EP ${episodeNumber} — ${(data as any).row?.title}${
-          (data as any).hadAudio ? " · audio ✓" : " · text only"
-        }`,
+        title: `Generated ${gen} episode${gen === 1 ? "" : "s"}`,
+        description: `Starting EP ${episodeNumber} — ${title}`,
       });
+
+      // Build a share template the admin can paste anywhere
+      const template =
+        `🎙️ NEW NAKEKNIGHT DROP\n\n` +
+        `EP${String(episodeNumber).padStart(2, "0")} — ${title}\n\n` +
+        `Free episodes weekly. Lifetime access $29.\n` +
+        `Listen → https://herodossier.lovable.app/chronicles\n\n` +
+        `#audiodrama #ai #nakeknight`;
+      setLastShareText(template);
+
       setAiPrompt("");
       await refresh();
     } catch (err: any) {
       toast({ title: "AI generate failed", description: err.message, variant: "destructive" });
     } finally {
       setAiBusy(false);
+    }
+  };
+
+  const copyShareTemplate = async () => {
+    if (!lastShareText) return;
+    try {
+      await navigator.clipboard.writeText(lastShareText);
+      toast({ title: "Share template copied" });
+    } catch {
+      toast({ title: "Copy failed", variant: "destructive" });
     }
   };
 
@@ -429,14 +456,57 @@ export default function AdminUpload() {
               </label>
             </div>
           </div>
-          <button
-            onClick={runAiGenerate}
-            disabled={aiBusy}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-display tracking-widest text-sm rounded-sm hover:opacity-90 disabled:opacity-50"
-          >
-            {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {aiBusy ? "GENERATING…" : "GENERATE EPISODE"}
-          </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label className="font-display text-[11px] tracking-widest text-muted-foreground">BATCH COUNT (1–8)</label>
+              <input
+                type="number"
+                min={1}
+                max={8}
+                value={aiCount}
+                onChange={(e) => setAiCount(Math.max(1, Math.min(8, parseInt(e.target.value) || 1)))}
+                className="mt-1 w-full px-3 py-2 bg-background border border-border rounded-sm text-sm focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div className="flex items-end gap-4 text-sm md:col-span-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={aiWeekly}
+                  onChange={(e) => setAiWeekly(e.target.checked)}
+                  disabled={aiCount < 2}
+                  className="accent-primary"
+                />
+                <span>Stagger releases weekly (+7 days each)</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={runAiGenerate}
+              disabled={aiBusy}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-display tracking-widest text-sm rounded-sm hover:opacity-90 disabled:opacity-50"
+            >
+              {aiBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {aiBusy ? "GENERATING…" : aiCount > 1 ? `GENERATE ${aiCount}-EPISODE BATCH` : "GENERATE EPISODE"}
+            </button>
+
+            {lastShareText && (
+              <button
+                onClick={copyShareTemplate}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-card border border-primary/40 text-primary font-display tracking-widest text-sm rounded-sm hover:border-primary"
+              >
+                <Sparkles className="w-4 h-4" /> COPY PUBLISH & SHARE TEMPLATE
+              </button>
+            )}
+          </div>
+
+          {lastShareText && (
+            <pre className="mt-2 p-3 bg-background/60 border border-border rounded-sm text-[11px] text-muted-foreground whitespace-pre-wrap font-mono">
+              {lastShareText}
+            </pre>
+          )}
         </div>
 
         <h2 className="font-display text-xl mb-4 tracking-widest">EXISTING EPISODES</h2>

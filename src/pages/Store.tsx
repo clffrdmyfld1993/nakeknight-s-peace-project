@@ -148,6 +148,61 @@ export default function Store() {
           </p>
         </motion.div>
 
+        {/* Bundles */}
+        <div className="grid md:grid-cols-3 gap-4 mb-12">
+          <div className="p-6 bg-card border border-border rounded-lg">
+            <p className="font-display text-[10px] tracking-[0.3em] text-muted-foreground mb-2">CASE FILES</p>
+            <h3 className="font-display text-2xl text-foreground mb-2">Case Files + AI Prompts</h3>
+            <p className="text-sm text-muted-foreground mb-4">Every case file + the AI prompts that built them. Instant download.</p>
+            <div className="flex items-center justify-between">
+              <span className="font-display text-3xl text-primary">$15</span>
+              <button
+                onClick={() => checkout([{ id: "case_files", title: "Case Files + AI Prompts", description: "", price: 15, priceFormatted: "$15", category: "Lore", stripePriceId: "price_1TePGgQaKvygaDfu3DJTEJm4" } as any], "bundle_cases")}
+                disabled={loading === "bundle_cases"}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-display text-xs tracking-widest rounded-sm hover:bg-primary/20 disabled:opacity-60"
+              >
+                {loading === "bundle_cases" && <Loader2 className="w-3.5 h-3.5 animate-spin" />} BUY $15
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6 bg-primary/10 border border-primary rounded-lg shadow-[0_0_60px_-30px_hsl(var(--primary))]">
+            <p className="font-display text-[10px] tracking-[0.3em] text-primary mb-2">PREMIUM CHRONICLES</p>
+            <h3 className="font-display text-2xl text-foreground mb-2">Lifetime Audio Access</h3>
+            <p className="text-sm text-muted-foreground mb-4">Every premium episode — past, present, and future. One payment, lifetime access.</p>
+            <div className="flex items-center justify-between">
+              <span className="font-display text-3xl text-primary">$29</span>
+              <button
+                onClick={() => checkout([{ id: "premium_lifetime", title: "Premium Chronicles Lifetime", description: "", price: 29, priceFormatted: "$29", category: "Audio", stripePriceId: "price_1TelQGQaKvygaDfuazPCyTBv" } as any], "bundle_premium")}
+                disabled={loading === "bundle_premium"}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display text-xs tracking-widest rounded-sm hover:opacity-90 disabled:opacity-60"
+              >
+                {loading === "bundle_premium" && <Loader2 className="w-3.5 h-3.5 animate-spin" />} UNLOCK $29
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6 bg-card border border-primary/40 rounded-lg relative overflow-hidden">
+            <span className="absolute top-3 right-3 px-2 py-0.5 bg-primary text-primary-foreground font-display text-[9px] tracking-widest rounded-sm">BEST VALUE</span>
+            <p className="font-display text-[10px] tracking-[0.3em] text-primary mb-2">GET BOTH</p>
+            <h3 className="font-display text-2xl text-foreground mb-2">Case Files + Chronicles</h3>
+            <p className="text-sm text-muted-foreground mb-4">Every case file, every prompt, every premium episode — for life.</p>
+            <div className="flex items-center justify-between">
+              <span className="font-display text-3xl text-primary">$44</span>
+              <button
+                onClick={() => checkout([
+                  { id: "case_files", title: "Case Files + AI Prompts", description: "", price: 15, priceFormatted: "$15", category: "Lore", stripePriceId: "price_1TePGgQaKvygaDfu3DJTEJm4" } as any,
+                  { id: "premium_lifetime", title: "Premium Chronicles Lifetime", description: "", price: 29, priceFormatted: "$29", category: "Audio", stripePriceId: "price_1TelQGQaKvygaDfuazPCyTBv" } as any,
+                ], "bundle_both")}
+                disabled={loading === "bundle_both"}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display text-xs tracking-widest rounded-sm hover:opacity-90 disabled:opacity-60"
+              >
+                {loading === "bundle_both" && <Loader2 className="w-3.5 h-3.5 animate-spin" />} BUY BOTH
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Cart indicator */}
         {cart.length > 0 && (
           <motion.div
