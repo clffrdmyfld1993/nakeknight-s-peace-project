@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
-import { ShoppingCart, Download, Bot, Sparkles, Loader2 } from "lucide-react";
+import LeadCapture from "@/components/LeadCapture";
+import { ShoppingCart, Download, Bot, Sparkles, Loader2, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { mockProducts, type Product } from "@/lib/medusa";
 import { supabase } from "@/integrations/supabase/client";
@@ -73,9 +74,10 @@ export default function Store() {
       return;
     }
     const referral =
-      typeof window !== "undefined"
+      (typeof window !== "undefined"
         ? new URLSearchParams(window.location.search).get("ref")
-        : null;
+        : null) ||
+      (typeof window !== "undefined" ? localStorage.getItem("nk_ref") : null);
     setLoading(key);
     try {
       const { data, error } = await supabase.functions.invoke("create-payment", {

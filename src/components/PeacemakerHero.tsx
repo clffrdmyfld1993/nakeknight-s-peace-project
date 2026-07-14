@@ -8,11 +8,17 @@ import { toast } from "sonner";
 const PREMIUM_PRICE = "price_1TelQGQaKvygaDfuazPCyTBv";
 const CASE_FILES_PRICE = "price_1TePGgQaKvygaDfu3DJTEJm4";
 
+const getRef = () => {
+  try {
+    const fromUrl = new URLSearchParams(window.location.search).get("ref");
+    return fromUrl || localStorage.getItem("nk_ref");
+  } catch {
+    return null;
+  }
+};
+
 const buyPrice = async (price: string, source: string) => {
-  const referral =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search).get("ref")
-      : null;
+  const referral = getRef();
   const { data, error } = await supabase.functions.invoke("create-payment", {
     body: { items: [{ price, quantity: 1 }], referral, source },
   });
