@@ -5,6 +5,7 @@ import { CheckCircle2, Download, Loader2, AlertTriangle, ArrowRight, Headphones,
 import SEO from "@/components/SEO";
 import ShareButtons from "@/components/ShareButtons";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface Fulfillment {
   paid: boolean;
@@ -14,6 +15,11 @@ interface Fulfillment {
   referral_code: string | null;
   error?: string;
 }
+
+const CASE_FILES_PRICE = "price_1TePGgQaKvygaDfu3DJTEJm4";
+const PREMIUM_PRICE = "price_1TelQGQaKvygaDfuazPCyTBv";
+
+const CASE_FILE = "case-files.zip";
 
 export default function Success() {
   const [state, setState] = useState<"loading" | "ok" | "error">("loading");
@@ -153,6 +159,57 @@ export default function Success() {
                 Payment received — but no automatic fulfillment is configured for these items. We'll be in touch shortly.
               </p>
             )}
+
+            {/* Upsell logic */}
+            {(() => {
+              const boughtCaseFiles = data.downloads.some((d) => d.file === CASE_FILE);
+              const boughtPremium = data.premium_chronicles;
+              const startUpsell = async (items: Array<{ price: string; quantity: number }>) => {
+                const ref = data.referral_code || (typeof window !== "undefined" ? localStorage.getItem("nk_ref") : null);
+                const { data: resp, error } = await supabase.functions.invoke("create-payment", {
+                  body: { items, referral: ref, source: "success_upsell" },
+                });
+                if (error || !resp?.url) {
+                  toast.error(error?.message || "Could not open checkout");
+                  return;
+                }
+                window.location.href = resp.url;
+              };
+              if (boughtCaseFiles && !boughtPremium) {
+                return (
+                  <div className="mt-4 p-5 bg-card/70 border border-primary/40 rounded-lg">
+                    <p className="font-display tracking-widest text-xs text-primary mb-1">UPGRADE TO LIFETIME</p>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Add <span className="text-foreground">Premium Chronicles</span> — lifetime access to every premium
+                      episode — for $29.
+                    </p>
+                    <button
+                      onClick={() => startUpsell([{ price: PREMIUM_PRICE, quantity: 1 }])}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display tracking-widest text-sm rounded-sm hover:opacity-90"
+                    >
+                      UNLOCK LIFETIME — $29
+                    </button>
+                  </div>
+                );
+              }
+              if (boughtPremium && !boughtCaseFiles) {
+                return (
+                  <div className="mt-4 p-5 bg-card/70 border border-primary/40 rounded-lg">
+                    <p className="font-display tracking-widest text-xs text-primary mb-1">COMPLETE THE ARSENAL</p>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Add the <span className="text-foreground">Case Files + AI Prompts</span> download — $15.
+                    </p>
+                    <button
+                      onClick={() => startUpsell([{ price: CASE_FILES_PRICE, quantity: 1 }])}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display tracking-widest text-sm rounded-sm hover:opacity-90"
+                    >
+                      ADD CASE FILES — $15
+                    </button>
+                  </div>
+                );
+              }
+              return null;
+            })()}
 
             <div className="mt-8 p-6 bg-primary/10 border border-primary/30 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
