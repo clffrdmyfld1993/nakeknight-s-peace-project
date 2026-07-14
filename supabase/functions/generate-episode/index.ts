@@ -23,14 +23,16 @@ const corsHeaders = {
 };
 
 const BodySchema = z.object({
-  prompt: z.string().min(4).max(2000),
-  episode_number: z.number().int().min(0).max(10_000),
+  prompt: z.string().min(4).max(2000).optional(),
+  episode_number: z.number().int().min(0).max(10_000).optional(),
   voice: z.string().max(64).optional(),
   publish: z.boolean().optional(),
   premium: z.boolean().optional(),
   generate_audio: z.boolean().optional(),
   count: z.number().int().min(1).max(8).optional(),
   weekly_offset: z.boolean().optional(),
+  mode: z.enum(["episode", "promo"]).optional(),
+  episode_id: z.string().uuid().optional(),
 });
 
 serve(async (req) => {
@@ -53,12 +55,64 @@ serve(async (req) => {
     generate_audio = true,
     count = 1,
     weekly_offset = false,
+    mode = "episode",
+    episode_id,
   } = parsed.data;
 
   const sb = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
+
+  // Promo assets mode: generate share copy from an existing episode
+  if (mode === "promo") {
+    if (!episode_id) return json({ error: "episode_id required for promo mode" }, 400);
+    const { data: ep, error: epErr } = await sb
+      .from("weekly_serials")
+      .select("title, episode_number, description, transcript_text")
+      .eq("id", episode_id)
+      .maybeSingle();
+    if (epErr || !ep) return json({ error: "Episode not found" }, 404);
+
+    const promoSys =
+      "You write viral social copy for NAKEKNIGHT CHRONICLES, a noir AI-built audio drama. " +
+      "Voice: terse, cinematic, mysterious, purple-neon aesthetic. Return STRICT JSON only.";
+    const promoUser =
+      `Episode ${ep.episode_number}: "${ep.title}"\nHook: ${ep.description ?? ""}\n\nExcerpt:\n` +
+      `${(ep.transcript_text ?? "").slice(0, 1200)}\n\n` +
+      `Return JSON: {"x_thread": string[] (6-8 short tweets under 260 chars, no numbering), ` +
+      `"reddit_post": {"title": string, "body": string (200-350 words, for r/audiodrama)}, ` +
+      `"ig_caption": string (under 300 chars, 3-5 hashtags), ` +
+      `"video_script": string (30-second vertical video script, VO + on-screen text cues)}. ` +
+      `Every URL in the copy must be exactly "https://herodossier.lovable.app/chronicles?ref=REF_CODE" so the caller can substitute.`;
+
+    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${lovableKey}` },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: promoSys },
+          { role: "user", content: promoUser },
+        ],
+        response_format: { type: "json_object" },
+      }),
+    });
+    if (aiRes.status === 429) return json({ error: "AI rate limit" }, 429);
+    if (aiRes.status === 402) return json({ error: "AI credits exhausted" }, 402);
+    if (!aiRes.ok) return json({ error: `AI ${aiRes.status}` }, 500);
+    const aiJson = await aiRes.json();
+    try {
+      const promo = JSON.parse(aiJson.choices?.[0]?.message?.content ?? "{}");
+      return json({ ok: true, promo, episode: { id: episode_id, title: ep.title, episode_number: ep.episode_number } });
+    } catch {
+      return json({ error: "AI returned malformed JSON" }, 500);
+    }
+  }
+
+  if (!prompt || episode_number === undefined) {
+    return json({ error: "prompt and episode_number required" }, 400);
+  }
 
   const sys =
     "You are the head writer for NAKEKNIGHT CHRONICLES — a noir, mythic, hard-boiled audio serial. " +
