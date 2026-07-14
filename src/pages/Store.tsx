@@ -310,6 +310,33 @@ export default function Store() {
           ))}
         </div>
 
+        {/* Coming Soon — universe waitlist */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-16 p-6 md:p-8 bg-card/70 border border-primary/30 rounded-lg shadow-[0_0_80px_-40px_hsl(var(--primary))]"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Rocket className="w-4 h-4 text-primary" />
+            <p className="font-display tracking-widest text-xs text-primary">COMING SOON — HERODOSSIER UNIVERSE</p>
+          </div>
+          <h3 className="font-display text-3xl md:text-4xl text-foreground mb-2">
+            Action Figures · Comics · RPG Modules
+          </h3>
+          <p className="text-sm text-muted-foreground max-w-xl mb-4">
+            NakeKnight is the audio gateway to a full founder-owned IP universe. Get on the launch list — first access
+            when the physical drops go live.
+          </p>
+          <LeadCapture
+            source="universe_waitlist"
+            magnet="HeroDossier IP Launch List"
+            buttonLabel="JOIN WAITLIST"
+            successMessage="You're on the launch list."
+            compact
+          />
+        </motion.div>
+
         {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0 }}
