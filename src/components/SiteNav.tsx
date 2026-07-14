@@ -17,6 +17,8 @@ const links = [
   { to: "/about", label: "ABOUT" },
   { to: "/blog", label: "FIELD NOTES" },
   { to: "/chronicles", label: "CHRONICLES" },
+  { to: "/universe", label: "UNIVERSE" },
+  { to: "/referrals", label: "REFER" },
   { to: "/share", label: "SHARE" },
   { to: "/press", label: "PRESS" },
   { to: "/join", label: "JOIN" },

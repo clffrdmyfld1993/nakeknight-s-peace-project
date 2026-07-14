@@ -50,6 +50,14 @@ export default function AdminUpload() {
   const [aiWeekly, setAiWeekly] = useState(true);
   const [aiBusy, setAiBusy] = useState(false);
   const [lastShareText, setLastShareText] = useState<string>("");
+  const [promoBusy, setPromoBusy] = useState<string | null>(null);
+  const [promoAssets, setPromoAssets] = useState<{
+    ep: { title: string; episode_number: number } | null;
+    x_thread?: string[];
+    reddit_post?: { title: string; body: string };
+    ig_caption?: string;
+    video_script?: string;
+  } | null>(null);
 
   const runAiGenerate = async () => {
     if (aiPrompt.trim().length < 4) {
@@ -116,6 +124,40 @@ export default function AdminUpload() {
     const saved = sessionStorage.getItem(TOKEN_KEY);
     if (saved) setToken(saved);
   }, []);
+
+  const generatePromo = async (ep: Serial) => {
+    setPromoBusy(ep.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-episode", {
+        body: { mode: "promo", episode_id: ep.id },
+        headers: { "x-admin-token": token },
+      });
+      if (error) throw new Error(error.message);
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const promo = (data as any).promo ?? {};
+      setPromoAssets({
+        ep: { title: ep.title, episode_number: ep.episode_number },
+        x_thread: promo.x_thread,
+        reddit_post: promo.reddit_post,
+        ig_caption: promo.ig_caption,
+        video_script: promo.video_script,
+      });
+      toast({ title: "Promo assets ready", description: `EP ${ep.episode_number} — ${ep.title}` });
+    } catch (err: any) {
+      toast({ title: "Promo generate failed", description: err.message, variant: "destructive" });
+    } finally {
+      setPromoBusy(null);
+    }
+  };
+
+  const copyText = async (text: string, label = "Copied") => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: label });
+    } catch {
+      toast({ title: "Copy failed", variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
     if (token) refresh();
@@ -509,6 +551,104 @@ export default function AdminUpload() {
           )}
         </div>
 
+        {promoAssets && (
+          <div className="p-6 md:p-8 bg-card/60 border border-primary/40 rounded-lg space-y-4 mb-12">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <h2 className="font-display tracking-widest text-sm">
+                  PROMO ASSETS — EP {promoAssets.ep && String(promoAssets.ep.episode_number).padStart(2, "0")} · {promoAssets.ep?.title}
+                </h2>
+              </div>
+              <button
+                onClick={() => setPromoAssets(null)}
+                className="text-xs font-display tracking-widest text-muted-foreground hover:text-primary"
+              >
+                CLOSE
+              </button>
+            </div>
+
+            {promoAssets.x_thread && promoAssets.x_thread.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-display text-xs tracking-widest text-muted-foreground">X THREAD</p>
+                  <button
+                    onClick={() => copyText((promoAssets.x_thread ?? []).join("\n\n"), "X thread copied")}
+                    className="text-[10px] font-display tracking-widest text-primary hover:opacity-80"
+                  >
+                    COPY ALL
+                  </button>
+                </div>
+                <ol className="space-y-2 text-sm">
+                  {promoAssets.x_thread.map((t, i) => (
+                    <li key={i} className="p-3 bg-background/60 border border-border rounded-sm">
+                      <span className="text-[10px] font-display tracking-widest text-primary mr-2">{i + 1}/{promoAssets.x_thread!.length}</span>
+                      <span className="whitespace-pre-wrap">{t}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {promoAssets.reddit_post && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-display text-xs tracking-widest text-muted-foreground">REDDIT POST</p>
+                  <button
+                    onClick={() =>
+                      copyText(
+                        `${promoAssets.reddit_post!.title}\n\n${promoAssets.reddit_post!.body}`,
+                        "Reddit post copied",
+                      )
+                    }
+                    className="text-[10px] font-display tracking-widest text-primary hover:opacity-80"
+                  >
+                    COPY
+                  </button>
+                </div>
+                <p className="text-sm font-medium mb-1">{promoAssets.reddit_post.title}</p>
+                <pre className="p-3 bg-background/60 border border-border rounded-sm text-[12px] whitespace-pre-wrap font-mono text-muted-foreground">
+                  {promoAssets.reddit_post.body}
+                </pre>
+              </div>
+            )}
+
+            {promoAssets.ig_caption && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-display text-xs tracking-widest text-muted-foreground">INSTAGRAM / TIKTOK CAPTION</p>
+                  <button
+                    onClick={() => copyText(promoAssets.ig_caption!, "Caption copied")}
+                    className="text-[10px] font-display tracking-widest text-primary hover:opacity-80"
+                  >
+                    COPY
+                  </button>
+                </div>
+                <pre className="p-3 bg-background/60 border border-border rounded-sm text-[12px] whitespace-pre-wrap font-mono text-muted-foreground">
+                  {promoAssets.ig_caption}
+                </pre>
+              </div>
+            )}
+
+            {promoAssets.video_script && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-display text-xs tracking-widest text-muted-foreground">30-SEC VIDEO SCRIPT</p>
+                  <button
+                    onClick={() => copyText(promoAssets.video_script!, "Video script copied")}
+                    className="text-[10px] font-display tracking-widest text-primary hover:opacity-80"
+                  >
+                    COPY
+                  </button>
+                </div>
+                <pre className="p-3 bg-background/60 border border-border rounded-sm text-[12px] whitespace-pre-wrap font-mono text-muted-foreground">
+                  {promoAssets.video_script}
+                </pre>
+              </div>
+            )}
+          </div>
+        )}
+
         <h2 className="font-display text-xl mb-4 tracking-widest">EXISTING EPISODES</h2>
         {loading ? (
           <p className="text-muted-foreground text-sm">Loading…</p>
@@ -537,7 +677,15 @@ export default function AdminUpload() {
                     {ep.audio_url ? " · audio ✓" : " · no audio"}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => generatePromo(ep)}
+                    disabled={promoBusy === ep.id}
+                    title="Generate promo assets"
+                    className="px-2 py-1 text-[10px] font-display tracking-widest border border-primary/40 text-primary rounded-sm hover:bg-primary/10 disabled:opacity-50"
+                  >
+                    {promoBusy === ep.id ? "…" : "PROMO"}
+                  </button>
                   <button
                     onClick={() => togglePremium(ep)}
                     title="Toggle premium"

@@ -23,7 +23,11 @@ import Join from "./pages/Join.tsx";
 import Chronicles from "./pages/Chronicles.tsx";
 import AdminUpload from "./pages/AdminUpload.tsx";
 import Success from "./pages/Success.tsx";
+import Referrals from "./pages/Referrals.tsx";
+import Universe from "./pages/Universe.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import RefCapture from "./components/RefCapture.tsx";
+import FloatingShareButton from "./components/FloatingShareButton.tsx";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +37,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <RefCapture />
         <SiteNav />
         <Routes>
           <Route path="/" element={<Index />} />
@@ -53,9 +58,12 @@ const App = () => (
           <Route path="/share" element={<Share />} />
           <Route path="/admin-upload" element={<AdminUpload />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/referrals" element={<Referrals />} />
+          <Route path="/universe" element={<Universe />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <FloatingShareButton />
         <SiteFooter />
       </BrowserRouter>
     </TooltipProvider>
