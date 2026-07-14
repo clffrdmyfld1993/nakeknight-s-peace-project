@@ -15,6 +15,8 @@ export default function SiteFooter() {
         <nav className="flex flex-wrap gap-4 text-xs font-display tracking-widest text-muted-foreground">
           <Link to="/chronicles" className="hover:text-primary">CHRONICLES</Link>
           <Link to="/store" className="hover:text-primary">STORE</Link>
+          <Link to="/universe" className="hover:text-primary">UNIVERSE</Link>
+          <Link to="/referrals" className="hover:text-primary">REFER</Link>
           <Link to="/share" className="hover:text-primary">SHARE</Link>
           <Link to="/about" className="hover:text-primary">ABOUT</Link>
           <Link to="/press" className="hover:text-primary">PRESS</Link>

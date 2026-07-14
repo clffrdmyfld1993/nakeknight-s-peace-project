@@ -38,16 +38,20 @@ export default function LeadCapture({
     }
     setLoading(true);
     try {
-      const referral =
-        typeof window !== "undefined"
-          ? new URLSearchParams(window.location.search).get("ref")
-          : null;
-      const { error } = await supabase.from("leads").insert({
-        email: parsed.data.email.toLowerCase(),
-        source,
-        magnet,
-        referral_code: referral,
-        user_agent:
+      let referral: string | null = null;
+      try {
+        referral =
+          new URLSearchParams(window.location.search).get("ref") ||
+          localStorage.getItem("nk_ref");
+      } catch {
+        // ignore
+      }
+      const { error } = await supabase.rpc("insert_lead_rate_limited", {
+        _email: parsed.data.email.toLowerCase(),
+        _source: source,
+        _magnet: magnet,
+        _referral_code: referral,
+        _user_agent:
           typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
       });
       if (error) throw error;
