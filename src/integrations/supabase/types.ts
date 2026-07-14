@@ -97,7 +97,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_referral_counts: {
+        Args: never
+        Returns: {
+          referral_code: string
+          referrals: number
+        }[]
+      }
+      insert_lead_rate_limited: {
+        Args: {
+          _email: string
+          _magnet?: string
+          _referral_code?: string
+          _source: string
+          _user_agent?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
