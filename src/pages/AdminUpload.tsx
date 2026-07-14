@@ -50,6 +50,14 @@ export default function AdminUpload() {
   const [aiWeekly, setAiWeekly] = useState(true);
   const [aiBusy, setAiBusy] = useState(false);
   const [lastShareText, setLastShareText] = useState<string>("");
+  const [promoBusy, setPromoBusy] = useState<string | null>(null);
+  const [promoAssets, setPromoAssets] = useState<{
+    ep: { title: string; episode_number: number } | null;
+    x_thread?: string[];
+    reddit_post?: { title: string; body: string };
+    ig_caption?: string;
+    video_script?: string;
+  } | null>(null);
 
   const runAiGenerate = async () => {
     if (aiPrompt.trim().length < 4) {
@@ -116,6 +124,40 @@ export default function AdminUpload() {
     const saved = sessionStorage.getItem(TOKEN_KEY);
     if (saved) setToken(saved);
   }, []);
+
+  const generatePromo = async (ep: Serial) => {
+    setPromoBusy(ep.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-episode", {
+        body: { mode: "promo", episode_id: ep.id },
+        headers: { "x-admin-token": token },
+      });
+      if (error) throw new Error(error.message);
+      if ((data as any)?.error) throw new Error((data as any).error);
+      const promo = (data as any).promo ?? {};
+      setPromoAssets({
+        ep: { title: ep.title, episode_number: ep.episode_number },
+        x_thread: promo.x_thread,
+        reddit_post: promo.reddit_post,
+        ig_caption: promo.ig_caption,
+        video_script: promo.video_script,
+      });
+      toast({ title: "Promo assets ready", description: `EP ${ep.episode_number} — ${ep.title}` });
+    } catch (err: any) {
+      toast({ title: "Promo generate failed", description: err.message, variant: "destructive" });
+    } finally {
+      setPromoBusy(null);
+    }
+  };
+
+  const copyText = async (text: string, label = "Copied") => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: label });
+    } catch {
+      toast({ title: "Copy failed", variant: "destructive" });
+    }
+  };
 
   useEffect(() => {
     if (token) refresh();
