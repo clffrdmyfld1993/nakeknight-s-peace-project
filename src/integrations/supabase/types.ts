@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      automation_logs: {
+        Row: {
+          context: Json | null
+          created_at: string
+          id: string
+          level: string
+          message: string
+          run_id: string
+          step: string
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          level: string
+          message: string
+          run_id: string
+          step: string
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          level?: string
+          message?: string
+          run_id?: string
+          step?: string
+        }
+        Relationships: []
+      }
+      episode_polls: {
+        Row: {
+          created_at: string
+          episode_id: string
+          id: string
+          options: Json
+          question: string
+        }
+        Insert: {
+          created_at?: string
+          episode_id: string
+          id?: string
+          options: Json
+          question: string
+        }
+        Update: {
+          created_at?: string
+          episode_id?: string
+          id?: string
+          options?: Json
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episode_polls_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_serials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -44,51 +106,105 @@ export type Database = {
         }
         Relationships: []
       }
+      lore_bible: {
+        Row: {
+          created_at: string
+          first_seen_episode: number | null
+          id: string
+          kind: string
+          name: string
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          first_seen_episode?: number | null
+          id?: string
+          kind: string
+          name: string
+          summary: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          first_seen_episode?: number | null
+          id?: string
+          kind?: string
+          name?: string
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       weekly_serials: {
         Row: {
           audio_url: string | null
+          cover_prompt: string | null
           cover_url: string | null
           created_at: string
           description: string | null
           duration_seconds: number | null
           episode_number: number
+          fun_facts: Json | null
           id: string
+          is_current: boolean
           is_premium: boolean
           is_published: boolean
+          moral_lesson: string | null
           release_date: string
+          run_id: string | null
+          show_notes: string | null
+          status: string
           title: string
           transcript_text: string | null
           updated_at: string
+          week_year: string | null
         }
         Insert: {
           audio_url?: string | null
+          cover_prompt?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
           duration_seconds?: number | null
           episode_number: number
+          fun_facts?: Json | null
           id?: string
+          is_current?: boolean
           is_premium?: boolean
           is_published?: boolean
+          moral_lesson?: string | null
           release_date?: string
+          run_id?: string | null
+          show_notes?: string | null
+          status?: string
           title: string
           transcript_text?: string | null
           updated_at?: string
+          week_year?: string | null
         }
         Update: {
           audio_url?: string | null
+          cover_prompt?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
           duration_seconds?: number | null
           episode_number?: number
+          fun_facts?: Json | null
           id?: string
+          is_current?: boolean
           is_premium?: boolean
           is_published?: boolean
+          moral_lesson?: string | null
           release_date?: string
+          run_id?: string | null
+          show_notes?: string | null
+          status?: string
           title?: string
           transcript_text?: string | null
           updated_at?: string
+          week_year?: string | null
         }
         Relationships: []
       }
