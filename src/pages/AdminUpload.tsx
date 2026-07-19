@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Zap, ScrollText } from "lucide-react";
 import { motion } from "framer-motion";
 import { Upload, Lock, CheckCircle2, Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+
 
 interface Serial {
   id: string;
@@ -58,6 +59,63 @@ export default function AdminUpload() {
     ig_caption?: string;
     video_script?: string;
   } | null>(null);
+
+  // Autonomous engine state
+  const [autoBusy, setAutoBusy] = useState(false);
+  const [autoLastResult, setAutoLastResult] = useState<any>(null);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [lore, setLore] = useState<any[]>([]);
+
+  const runAutoWeekly = async () => {
+    if (!confirm("Run the autonomous weekly episode now? This will generate + publish a new episode using the current lore + prior context.")) return;
+    setAutoBusy(true);
+    setAutoLastResult(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("auto-publish-weekly", {
+        headers: { "x-admin-token": token },
+      });
+      if (error) throw new Error(error.message);
+      setAutoLastResult(data);
+      if ((data as any)?.ok) {
+        toast({
+          title: (data as any).skipped ? "Already ran this week" : `Episode ${(data as any).episode_number} published`,
+          description: (data as any).skipped ? "Idempotent skip." : "Autonomous engine complete.",
+        });
+      } else {
+        toast({ title: "Run failed", description: (data as any)?.error || "See logs", variant: "destructive" });
+      }
+      await Promise.all([refresh(), loadLogs(), loadLore()]);
+    } catch (err: any) {
+      toast({ title: "Auto-run failed", description: err.message, variant: "destructive" });
+    } finally {
+      setAutoBusy(false);
+    }
+  };
+
+  const loadLogs = async () => {
+    try {
+      const { data } = await supabase
+        .from("automation_logs" as any)
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      setLogs((data as any) || []);
+    } catch {
+      // service-role only; requires calling via edge function in production. Silent for now.
+    }
+  };
+
+  const loadLore = async () => {
+    try {
+      const { data } = await supabase
+        .from("lore_bible" as any)
+        .select("*")
+        .order("first_seen_episode", { ascending: false })
+        .limit(100);
+      setLore((data as any) || []);
+    } catch {}
+  };
+
 
   const runAiGenerate = async () => {
     if (aiPrompt.trim().length < 4) {
@@ -160,9 +218,13 @@ export default function AdminUpload() {
   };
 
   useEffect(() => {
-    if (token) refresh();
+    if (token) {
+      refresh();
+      loadLore();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
 
   const callAdmin = async (body: any) => {
     const { data, error } = await supabase.functions.invoke("admin-serials", {
@@ -452,6 +514,91 @@ export default function AdminUpload() {
             {submitting ? progress || "WORKING…" : "SAVE EPISODE"}
           </button>
         </form>
+
+        {/* AUTONOMOUS CHRONICLES ENGINE */}
+        <div className="p-6 md:p-8 bg-card/60 border border-primary/40 rounded-lg space-y-4 mb-12">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" />
+            <h2 className="font-display tracking-widest text-sm">AUTONOMOUS ENGINE</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Cron runs every Friday 04:00 UTC (midnight EST). Reads the Lore Bible + last 3 episodes,
+            drafts a new episode via Gemini, runs a QA pass, then publishes. Idempotent per ISO week.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={runAutoWeekly}
+              disabled={autoBusy}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display tracking-widest text-xs rounded-sm hover:opacity-90 disabled:opacity-50"
+            >
+              {autoBusy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
+              {autoBusy ? "GENERATING…" : "RUN WEEKLY NOW"}
+            </button>
+            <button
+              onClick={loadLogs}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-background border border-border font-display tracking-widest text-xs rounded-sm hover:border-primary"
+            >
+              LOAD LOGS
+            </button>
+          </div>
+
+          {autoLastResult && (
+            <pre className="mt-2 p-3 bg-background border border-border rounded text-[10px] font-mono overflow-x-auto max-h-40">
+              {JSON.stringify(autoLastResult, null, 2)}
+            </pre>
+          )}
+
+          {logs.length > 0 && (
+            <div className="mt-4">
+              <p className="font-display text-[10px] tracking-widest text-muted-foreground mb-2">
+                RECENT AUTOMATION LOGS
+              </p>
+              <div className="space-y-1 max-h-64 overflow-y-auto text-[11px] font-mono">
+                {logs.map((l) => (
+                  <div key={l.id} className="flex gap-2 py-1 border-b border-border/40">
+                    <span className={
+                      l.level === "error" ? "text-red-400" :
+                      l.level === "warn" ? "text-yellow-400" : "text-muted-foreground"
+                    }>
+                      [{l.level}]
+                    </span>
+                    <span className="text-primary/80">{l.step}</span>
+                    <span className="flex-1 truncate">{l.message}</span>
+                    <span className="text-muted-foreground shrink-0">
+                      {new Date(l.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {lore.length > 0 && (
+            <div className="mt-4">
+              <div className="flex items-center gap-2 mb-2">
+                <ScrollText className="w-3.5 h-3.5 text-primary" />
+                <p className="font-display text-[10px] tracking-widest text-muted-foreground">
+                  LORE BIBLE ({lore.length})
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                {lore.map((l) => (
+                  <div key={l.id} className="p-2 bg-background border border-border rounded text-[11px]">
+                    <div className="flex justify-between gap-2">
+                      <span className="font-display tracking-wider text-primary">{l.name}</span>
+                      <span className="text-muted-foreground text-[10px]">
+                        {l.kind} · EP{l.first_seen_episode ?? "—"}
+                      </span>
+                    </div>
+                    <p className="text-muted-foreground mt-1 line-clamp-2">{l.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+
 
         <div className="p-6 md:p-8 bg-card/60 border border-primary/30 rounded-lg space-y-4 mb-12">
           <div className="flex items-center gap-2">
