@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Zap, ScrollText } from "lucide-react";
 import { motion } from "framer-motion";
 import { Upload, Lock, CheckCircle2, Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+
 
 interface Serial {
   id: string;
