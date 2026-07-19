@@ -218,9 +218,13 @@ export default function AdminUpload() {
   };
 
   useEffect(() => {
-    if (token) refresh();
+    if (token) {
+      refresh();
+      loadLore();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
 
   const callAdmin = async (body: any) => {
     const { data, error } = await supabase.functions.invoke("admin-serials", {
