@@ -60,6 +60,63 @@ export default function AdminUpload() {
     video_script?: string;
   } | null>(null);
 
+  // Autonomous engine state
+  const [autoBusy, setAutoBusy] = useState(false);
+  const [autoLastResult, setAutoLastResult] = useState<any>(null);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [lore, setLore] = useState<any[]>([]);
+
+  const runAutoWeekly = async () => {
+    if (!confirm("Run the autonomous weekly episode now? This will generate + publish a new episode using the current lore + prior context.")) return;
+    setAutoBusy(true);
+    setAutoLastResult(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("auto-publish-weekly", {
+        headers: { "x-admin-token": token },
+      });
+      if (error) throw new Error(error.message);
+      setAutoLastResult(data);
+      if ((data as any)?.ok) {
+        toast({
+          title: (data as any).skipped ? "Already ran this week" : `Episode ${(data as any).episode_number} published`,
+          description: (data as any).skipped ? "Idempotent skip." : "Autonomous engine complete.",
+        });
+      } else {
+        toast({ title: "Run failed", description: (data as any)?.error || "See logs", variant: "destructive" });
+      }
+      await Promise.all([refresh(), loadLogs(), loadLore()]);
+    } catch (err: any) {
+      toast({ title: "Auto-run failed", description: err.message, variant: "destructive" });
+    } finally {
+      setAutoBusy(false);
+    }
+  };
+
+  const loadLogs = async () => {
+    try {
+      const { data } = await supabase
+        .from("automation_logs" as any)
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      setLogs((data as any) || []);
+    } catch {
+      // service-role only; requires calling via edge function in production. Silent for now.
+    }
+  };
+
+  const loadLore = async () => {
+    try {
+      const { data } = await supabase
+        .from("lore_bible" as any)
+        .select("*")
+        .order("first_seen_episode", { ascending: false })
+        .limit(100);
+      setLore((data as any) || []);
+    } catch {}
+  };
+
+
   const runAiGenerate = async () => {
     if (aiPrompt.trim().length < 4) {
       toast({ title: "Give the engine a prompt", variant: "destructive" });
