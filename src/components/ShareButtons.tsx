@@ -64,7 +64,9 @@ export default function ShareButtons({ url, text, refCode, compact }: ShareButto
           key={t.label}
           href={t.href}
           target="_blank"
+          rel="noreferrer noopener"
           onClick={() => void trackShare(t.label, url)}
+
 
           aria-label={`Share on ${t.label}`}
           className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-card border border-border rounded-sm text-xs font-display tracking-widest text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
