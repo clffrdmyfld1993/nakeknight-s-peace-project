@@ -4,6 +4,7 @@ import { Play, Pause, Volume2, VolumeX, Loader2 } from "lucide-react";
 interface AudioPlayerProps {
   src: string;
   title?: string;
+  onPlay?: () => void;
 }
 
 const fmt = (s: number) => {
@@ -13,7 +14,7 @@ const fmt = (s: number) => {
   return `${m}:${r.toString().padStart(2, "0")}`;
 };
 
-export default function AudioPlayer({ src, title }: AudioPlayerProps) {
+export default function AudioPlayer({ src, title, onPlay: onPlayCb }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,10 @@ export default function AudioPlayer({ src, title }: AudioPlayerProps) {
     if (!a) return;
     const onTime = () => setCurrent(a.currentTime);
     const onMeta = () => setDuration(a.duration || 0);
-    const onPlay = () => setPlaying(true);
+    const onPlay = () => {
+      setPlaying(true);
+      onPlayCb?.();
+    };
     const onPause = () => setPlaying(false);
     const onEnd = () => setPlaying(false);
     const onWait = () => setLoading(true);

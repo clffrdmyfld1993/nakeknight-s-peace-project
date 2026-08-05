@@ -25,6 +25,9 @@ import AdminUpload from "./pages/AdminUpload.tsx";
 import Success from "./pages/Success.tsx";
 import Referrals from "./pages/Referrals.tsx";
 import Universe from "./pages/Universe.tsx";
+import Roadmap from "./pages/Roadmap.tsx";
+import Welcome from "./pages/Welcome.tsx";
+import AdminHealth from "./pages/AdminHealth.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import RefCapture from "./components/RefCapture.tsx";
 import FloatingShareButton from "./components/FloatingShareButton.tsx";
@@ -60,6 +63,9 @@ const App = () => (
           <Route path="/success" element={<Success />} />
           <Route path="/referrals" element={<Referrals />} />
           <Route path="/universe" element={<Universe />} />
+          <Route path="/roadmap" element={<Roadmap />} />
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/admin/health" element={<AdminHealth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
