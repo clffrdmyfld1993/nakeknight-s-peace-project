@@ -46,11 +46,13 @@ export default function ShareButtons({ url, text, refCode, compact }: ShareButto
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(fullUrl);
+      void trackShare("copy", url);
       toast.success("Link copied");
     } catch {
       toast.error("Copy failed");
     }
   };
+
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${compact ? "" : "mt-4"}`}>
