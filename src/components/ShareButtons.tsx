@@ -1,5 +1,7 @@
 import { Twitter, MessageCircle, Share2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
+import { trackShare } from "@/lib/track";
+
 
 interface ShareButtonsProps {
   url: string; // absolute or relative path
