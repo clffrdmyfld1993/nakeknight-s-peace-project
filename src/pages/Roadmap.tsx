@@ -119,7 +119,13 @@ export default function Roadmap() {
             One email per milestone — no weekly newsletter, no filler. Early supporters get launch
             pricing on anything physical.
           </p>
-          <LeadCapture source="roadmap" magnet="Roadmap launch alerts" cta="NOTIFY ME" />
+          <LeadCapture
+            source="roadmap"
+            magnet="Roadmap launch alerts"
+            buttonLabel="NOTIFY ME"
+            successMessage="You're on the list — we'll email you at the next milestone."
+          />
+
         </div>
       </div>
     </div>
