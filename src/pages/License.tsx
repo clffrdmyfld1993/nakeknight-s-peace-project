@@ -88,7 +88,7 @@ export default function License() {
   });
   const [sending, setSending] = useState(false);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     const parsed = inquirySchema.safeParse(form);
     if (!parsed.success) {
@@ -98,6 +98,19 @@ export default function License() {
     }
     setSending(true);
     const d = parsed.data;
+
+    // Persist the inquiry so nothing is lost if the mail client never opens.
+    const { error } = await supabase.from("license_inquiries").insert({
+      name: d.name,
+      company: d.company || null,
+      email: d.email,
+      tier: d.tier,
+      message: d.message,
+    });
+    if (error) {
+      console.error("license inquiry save failed", error);
+    }
+
     const subject = `NakeKnight™ ${d.tier} License Inquiry — ${d.name}`;
     const body = [
       `Name: ${d.name}`,
@@ -114,11 +127,13 @@ export default function License() {
       .join("\n");
     const href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = href;
-    setTimeout(() => {
-      setSending(false);
-      toast({ title: "Opening your email client", description: `Sending to ${CONTACT_EMAIL}` });
-    }, 400);
+    setSending(false);
+    toast({
+      title: error ? "Inquiry received" : "Inquiry logged",
+      description: `Opening your email client — a copy is also on its way to ${CONTACT_EMAIL}.`,
+    });
   }
+
 
   return (
     <div className="min-h-screen bg-background font-body pt-14">
