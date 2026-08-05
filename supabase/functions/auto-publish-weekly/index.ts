@@ -314,8 +314,25 @@ serve(async (req) => {
       .select("id");
     await log(ctx, "archive.old", "info", `archived ${archived?.length ?? 0} old episodes`);
 
+    // Auto-promote: generate social copy for the new episode (non-fatal)
+    try {
+      const promoRes = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/generate-promo`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          ...(Deno.env.get("CRON_SECRET") ? { "x-cron-secret": Deno.env.get("CRON_SECRET")! } : {}),
+        },
+        body: JSON.stringify({ episode_id: newRow.id }),
+      });
+      await log(ctx, "promo.trigger", promoRes.ok ? "info" : "warn", `promo generation ${promoRes.status}`);
+    } catch (e) {
+      await log(ctx, "promo.trigger", "warn", `promo generation failed: ${(e as Error).message}`);
+    }
+
     await log(ctx, "run.done", "info", `weekly run complete for ${weekYear}`, { episode_number: nextNum });
     return json({ ok: true, run_id: runId, episode_number: nextNum, episode_id: newRow.id, has_audio: !!audioPath, quality: scores });
+
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     await log(ctx, "run.error", "error", msg);

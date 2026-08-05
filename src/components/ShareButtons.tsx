@@ -1,5 +1,7 @@
 import { Twitter, MessageCircle, Share2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
+import { trackShare } from "@/lib/track";
+
 
 interface ShareButtonsProps {
   url: string; // absolute or relative path
@@ -44,11 +46,13 @@ export default function ShareButtons({ url, text, refCode, compact }: ShareButto
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(fullUrl);
+      void trackShare("copy", url);
       toast.success("Link copied");
     } catch {
       toast.error("Copy failed");
     }
   };
+
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${compact ? "" : "mt-4"}`}>
@@ -61,6 +65,9 @@ export default function ShareButtons({ url, text, refCode, compact }: ShareButto
           href={t.href}
           target="_blank"
           rel="noreferrer noopener"
+          onClick={() => void trackShare(t.label, url)}
+
+
           aria-label={`Share on ${t.label}`}
           className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-card border border-border rounded-sm text-xs font-display tracking-widest text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
         >

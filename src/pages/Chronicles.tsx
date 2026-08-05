@@ -7,6 +7,7 @@ import ShareButtons from "@/components/ShareButtons";
 import LeadCapture from "@/components/LeadCapture";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { trackPlay } from "@/lib/track";
 
 interface Episode {
   id: string;
@@ -157,7 +158,7 @@ const EpisodeCard = ({ ep, premiumSession }: { ep: Episode; premiumSession: stri
           <Loader2 className="w-4 h-4 animate-spin" /> Preparing stream…
         </div>
       ) : audioSrc ? (
-        <AudioPlayer src={audioSrc} title={ep.title} />
+        <AudioPlayer src={audioSrc} title={ep.title} onPlay={() => void trackPlay(ep.id, ep.duration_seconds ?? undefined)} />
       ) : (
         <div className="p-4 bg-muted/40 border border-dashed border-border rounded-lg text-sm text-muted-foreground flex items-center gap-2">
           <Headphones className="w-4 h-4" /> Audio not yet uploaded for this episode.

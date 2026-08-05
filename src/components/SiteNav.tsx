@@ -18,6 +18,8 @@ const links = [
   { to: "/blog", label: "FIELD NOTES" },
   { to: "/chronicles", label: "CHRONICLES" },
   { to: "/universe", label: "UNIVERSE" },
+  { to: "/roadmap", label: "ROADMAP" },
+
   { to: "/referrals", label: "REFER" },
   { to: "/share", label: "SHARE" },
   { to: "/press", label: "PRESS" },
