@@ -44,6 +44,41 @@ export type Database = {
         }
         Relationships: []
       }
+      episode_plays: {
+        Row: {
+          duration_seconds: number | null
+          episode_id: string
+          id: string
+          played_at: string
+          ref: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          duration_seconds?: number | null
+          episode_id: string
+          id?: string
+          played_at?: string
+          ref?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          duration_seconds?: number | null
+          episode_id?: string
+          id?: string
+          played_at?: string
+          ref?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episode_plays_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_serials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       episode_polls: {
         Row: {
           created_at: string
@@ -69,6 +104,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "episode_polls_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_serials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      episode_promos: {
+        Row: {
+          created_at: string
+          episode_id: string
+          id: string
+          ig_caption: string | null
+          reddit_post: string | null
+          run_id: string | null
+          video_script: string | null
+          x_thread: string | null
+        }
+        Insert: {
+          created_at?: string
+          episode_id: string
+          id?: string
+          ig_caption?: string | null
+          reddit_post?: string | null
+          run_id?: string | null
+          video_script?: string | null
+          x_thread?: string | null
+        }
+        Update: {
+          created_at?: string
+          episode_id?: string
+          id?: string
+          ig_caption?: string | null
+          reddit_post?: string | null
+          run_id?: string | null
+          video_script?: string | null
+          x_thread?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episode_promos_episode_id_fkey"
             columns: ["episode_id"]
             isOneToOne: false
             referencedRelation: "weekly_serials"
@@ -106,6 +182,39 @@ export type Database = {
         }
         Relationships: []
       }
+      license_inquiries: {
+        Row: {
+          budget: string | null
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          referral_code: string | null
+          use_case: string
+        }
+        Insert: {
+          budget?: string | null
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          referral_code?: string | null
+          use_case: string
+        }
+        Update: {
+          budget?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          referral_code?: string | null
+          use_case?: string
+        }
+        Relationships: []
+      }
       lore_bible: {
         Row: {
           created_at: string
@@ -133,6 +242,30 @@ export type Database = {
           name?: string
           summary?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      referral_shares: {
+        Row: {
+          created_at: string
+          id: string
+          network: string
+          path: string | null
+          referral_code: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          network: string
+          path?: string | null
+          referral_code?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          network?: string
+          path?: string | null
+          referral_code?: string | null
         }
         Relationships: []
       }
@@ -213,11 +346,25 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_episode_play_counts: {
+        Args: never
+        Returns: {
+          episode_id: string
+          plays: number
+        }[]
+      }
       get_referral_counts: {
         Args: never
         Returns: {
           referral_code: string
           referrals: number
+        }[]
+      }
+      get_share_counts: {
+        Args: never
+        Returns: {
+          referral_code: string
+          shares: number
         }[]
       }
       insert_lead_rate_limited: {
