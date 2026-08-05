@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import SEO from "@/components/SEO";
 import { Shirt, BookOpen, Gamepad2, Film, Bot, ArrowRight, CheckCircle2, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
