@@ -105,9 +105,9 @@ export default function License() {
       name: d.name,
       company: d.company || null,
       email: d.email,
-      tier: d.tier,
-      message: d.message,
+      use_case: `${d.tier}: ${d.message}`,
     });
+
     if (error) {
       console.error("license inquiry save failed", error);
     }
