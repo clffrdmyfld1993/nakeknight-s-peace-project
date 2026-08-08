@@ -69,6 +69,9 @@ const App = () => (
           <Route path="/roadmap" element={<Roadmap />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/admin/health" element={<AdminHealth />} />
+          <Route path="/admin/lore" element={<AdminLore />} />
+          <Route path="/admin/automation" element={<AdminAutomation />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
