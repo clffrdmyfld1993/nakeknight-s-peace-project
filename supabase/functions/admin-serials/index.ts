@@ -113,6 +113,98 @@ serve(async (req) => {
       if (error) throw error;
       return json({ path: data.path, token: data.token, signedUrl: data.signedUrl });
     }
+    if (body.action === "lore_list") {
+      const { data, error } = await supabase
+        .from("lore_bible")
+        .select("*")
+        .order("kind", { ascending: true })
+        .order("name", { ascending: true });
+      if (error) throw error;
+      return json({ rows: data });
+    }
+    if (body.action === "lore_create") {
+      const { data, error } = await supabase.from("lore_bible").insert(body.data).select().single();
+      if (error) throw error;
+      return json({ row: data });
+    }
+    if (body.action === "lore_update") {
+      const { data, error } = await supabase
+        .from("lore_bible")
+        .update(body.data)
+        .eq("id", body.id)
+        .select()
+        .single();
+      if (error) throw error;
+      return json({ row: data });
+    }
+    if (body.action === "lore_delete") {
+      const { error } = await supabase.from("lore_bible").delete().eq("id", body.id);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+    if (body.action === "logs_list") {
+      let q = supabase
+        .from("automation_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(body.limit ?? 200);
+      if (body.level) q = q.eq("level", body.level);
+      if (body.run_id) q = q.eq("run_id", body.run_id);
+      const { data, error } = await q;
+      if (error) throw error;
+      return json({ rows: data });
+    }
+    if (body.action === "analytics") {
+      const [eps, plays, shares, leads, inquiries] = await Promise.all([
+        supabase
+          .from("weekly_serials")
+          .select("id, title, episode_number, is_published, is_premium")
+          .order("episode_number", { ascending: true }),
+        supabase.from("episode_plays").select("episode_id, played_at, ref").limit(5000),
+        supabase.from("referral_shares").select("network, referral_code").limit(5000),
+        supabase.from("leads").select("source, created_at").limit(5000),
+        supabase.from("license_inquiries").select("id").limit(1000),
+      ]);
+      if (eps.error) throw eps.error;
+
+      const playRows = plays.data ?? [];
+      const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      const perEpisode = new Map<string, number>();
+      const refBreakdown = new Map<string, number>();
+      let playsThisWeek = 0;
+      for (const p of playRows) {
+        perEpisode.set(p.episode_id, (perEpisode.get(p.episode_id) ?? 0) + 1);
+        const key = p.ref || "(direct)";
+        refBreakdown.set(key, (refBreakdown.get(key) ?? 0) + 1);
+        if (new Date(p.played_at).getTime() >= weekAgo) playsThisWeek++;
+      }
+      const networks = new Map<string, number>();
+      for (const s of shares.data ?? []) {
+        networks.set(s.network, (networks.get(s.network) ?? 0) + 1);
+      }
+      const leadSources = new Map<string, number>();
+      for (const l of leads.data ?? []) {
+        leadSources.set(l.source, (leadSources.get(l.source) ?? 0) + 1);
+      }
+
+      return json({
+        episodes: (eps.data ?? []).map((e) => ({ ...e, plays: perEpisode.get(e.id) ?? 0 })),
+        totals: {
+          plays: playRows.length,
+          plays_this_week: playsThisWeek,
+          shares: (shares.data ?? []).length,
+          leads: (leads.data ?? []).length,
+          license_inquiries: (inquiries.data ?? []).length,
+          episodes_published: (eps.data ?? []).filter((e) => e.is_published).length,
+        },
+        ref_breakdown: [...refBreakdown.entries()]
+          .map(([ref, count]) => ({ ref, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 20),
+        share_networks: [...networks.entries()].map(([network, count]) => ({ network, count })),
+        lead_sources: [...leadSources.entries()].map(([source, count]) => ({ source, count })),
+      });
+    }
     return json({ error: "Unknown action" }, 400);
   } catch (err) {
     return json({ error: err instanceof Error ? err.message : String(err) }, 500);
