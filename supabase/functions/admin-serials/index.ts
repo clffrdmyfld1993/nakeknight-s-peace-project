@@ -21,6 +21,13 @@ const SerialSchema = z.object({
   is_premium: z.boolean().optional(),
 });
 
+const LoreSchema = z.object({
+  kind: z.enum(["character", "place", "artifact", "theme"]),
+  name: z.string().min(1).max(200),
+  summary: z.string().min(1).max(4000),
+  first_seen_episode: z.number().int().min(0).max(10_000).optional().nullable(),
+});
+
 const BodySchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("list") }),
   z.object({ action: z.literal("create"), data: SerialSchema }),
@@ -30,6 +37,17 @@ const BodySchema = z.discriminatedUnion("action", [
     action: z.literal("signed_upload"),
     path: z.string().min(1).max(500).regex(/^[A-Za-z0-9._\-\/]+$/),
   }),
+  z.object({ action: z.literal("lore_list") }),
+  z.object({ action: z.literal("lore_create"), data: LoreSchema }),
+  z.object({ action: z.literal("lore_update"), id: z.string().uuid(), data: LoreSchema.partial() }),
+  z.object({ action: z.literal("lore_delete"), id: z.string().uuid() }),
+  z.object({
+    action: z.literal("logs_list"),
+    limit: z.number().int().min(1).max(500).optional(),
+    level: z.enum(["info", "warn", "error"]).optional(),
+    run_id: z.string().uuid().optional(),
+  }),
+  z.object({ action: z.literal("analytics") }),
 ]);
 
 serve(async (req) => {
