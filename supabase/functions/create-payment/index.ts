@@ -12,13 +12,18 @@ const PRICE_IDS = new Set<string>([
   "price_1TXekBQaKvygaDfuD0wRtBXy", // Iron Pact comic
   "price_1TXekpQaKvygaDfuVAcK9WYr", // Hero Dossier Art Pack
   "price_1TXelCQaKvygaDfuIU1E618w", // Complete Lore Collection
-  "price_1TXeo8QaKvygaDfuLrhyzP8Q", // Wallpaper Pack
+  "price_1TXeo8QaKvygaDfuLrhyzP8Q", // Wallpaper Pack (order bump)
   "price_1TXeqHQaKvygaDfuwx5nOZ87", // Ashen Accord comic
   "price_1TXevvQaKvygaDfuxBJrXkCG", // Soundtrack
   "price_1TePGgQaKvygaDfu3DJTEJm4", // Complete Case Files & AI Prompts ($15)
   "price_1TelQGQaKvygaDfuazPCyTBv", // Premium Chronicles — Lifetime ($29)
+  "price_1U3A0KQaKvygaDfu5P6Asi4z", // Founder's Archive ($99)
 ]);
 
+// Recurring prices must check out in subscription mode.
+const RECURRING_PRICE_IDS = new Set<string>([
+  "price_1U3A0ZQaKvygaDfuvR8SnhrO", // Chronicles Membership ($7/mo)
+]);
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -41,36 +46,61 @@ serve(async (req) => {
         ? body.source
         : "store";
 
-    const lineItems = items
-      .filter((i) => i && typeof i.price === "string" && PRICE_IDS.has(i.price))
-      .map((i) => ({
-        price: i.price,
-        quantity: Math.max(1, Math.min(10, Number(i.quantity) || 1)),
-      }));
+    const clean = items.filter(
+      (i) =>
+        i &&
+        typeof i.price === "string" &&
+        (PRICE_IDS.has(i.price) || RECURRING_PRICE_IDS.has(i.price)),
+    );
 
-    if (lineItems.length === 0) {
+    const hasRecurring = clean.some((i) => RECURRING_PRICE_IDS.has(i.price));
+    const hasOneTime = clean.some((i) => PRICE_IDS.has(i.price));
+
+    if (clean.length === 0) {
       return new Response(JSON.stringify({ error: "No valid items" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    if (hasRecurring && hasOneTime) {
+      return new Response(
+        JSON.stringify({
+          error: "Membership must be purchased on its own checkout.",
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    const lineItems = clean.map((i) => ({
+      price: i.price,
+      quantity: hasRecurring
+        ? 1
+        : Math.max(1, Math.min(10, Number(i.quantity) || 1)),
+    }));
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
 
     const origin = req.headers.get("origin") || "https://herodossier.lovable.app";
+    const metadata = {
+      ...(referral ? { referral_code: referral } : {}),
+      source,
+      ...(hasRecurring ? { plan: "chronicles_membership" } : {}),
+    };
+
     const session = await stripe.checkout.sessions.create({
-      mode: "payment",
+      mode: hasRecurring ? "subscription" : "payment",
       line_items: lineItems,
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/store?status=canceled`,
-      metadata: {
-        ...(referral ? { referral_code: referral } : {}),
-        source,
-      },
+      metadata,
+      ...(hasRecurring ? { subscription_data: { metadata } } : {}),
     });
-
 
     return new Response(JSON.stringify({ url: session.url }), {
       status: 200,

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
 import LeadCapture from "@/components/LeadCapture";
+import OfferLadder from "@/components/OfferLadder";
 import { ShoppingCart, Download, Bot, Sparkles, Loader2, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
 import { mockProducts, type Product } from "@/lib/medusa";
@@ -149,6 +150,11 @@ export default function Store() {
             Comics, art, lore, and soundtracks — all AI-generated, all from the NakeKnight™ universe.
           </p>
         </motion.div>
+
+        {/* Money ladder — entry, recurring, flagship */}
+        <div className="-mx-6 mb-4">
+          <OfferLadder source="store" />
+        </div>
 
         {/* Bundles */}
         <div className="grid md:grid-cols-3 gap-4 mb-12">
