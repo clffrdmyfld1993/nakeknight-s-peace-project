@@ -1,5 +1,6 @@
 import PeacemakerHero from "@/components/PeacemakerHero";
 import HeroProfile from "@/components/HeroProfile";
+import OfferLadder from "@/components/OfferLadder";
 import SEO from "@/components/SEO";
 
 const Index = () => (
@@ -19,6 +20,8 @@ const Index = () => (
       }}
     />
     <PeacemakerHero />
+    <PeacemakerHero />
+    <OfferLadder source="home" />
     <HeroProfile />
   </>
 );

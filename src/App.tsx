@@ -31,6 +31,7 @@ import AdminHealth from "./pages/AdminHealth.tsx";
 import AdminLore from "./pages/AdminLore.tsx";
 import AdminAutomation from "./pages/AdminAutomation.tsx";
 import AdminAnalytics from "./pages/AdminAnalytics.tsx";
+import AdminCashflow from "./pages/AdminCashflow.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import RefCapture from "./components/RefCapture.tsx";
 import FloatingShareButton from "./components/FloatingShareButton.tsx";
@@ -72,6 +73,7 @@ const App = () => (
           <Route path="/admin/lore" element={<AdminLore />} />
           <Route path="/admin/automation" element={<AdminAutomation />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/cashflow" element={<AdminCashflow />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
