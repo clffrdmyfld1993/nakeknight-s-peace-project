@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import SEO from "@/components/SEO";
-import LeadCapture from "@/components/LeadCapture";
+import { Link } from "react-router-dom";
 import OfferLadder from "@/components/OfferLadder";
 import { ShoppingCart, Download, Bot, Sparkles, Loader2, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -331,16 +331,15 @@ export default function Store() {
             Action Figures · Comics · RPG Modules
           </h3>
           <p className="text-sm text-muted-foreground max-w-xl mb-4">
-            NakeKnight is the audio gateway to a full founder-owned IP universe. Get on the launch list — first access
-            when the physical drops go live.
+            NakeKnight is the audio gateway to a full founder-owned IP universe. No waitlist, no email
+            harvesting — buyers get first access to every physical drop automatically.
           </p>
-          <LeadCapture
-            source="universe_waitlist"
-            magnet="HeroDossier IP Launch List"
-            buttonLabel="JOIN WAITLIST"
-            successMessage="You're on the launch list."
-            compact
-          />
+          <Link
+            to="/universe"
+            className="inline-block font-display tracking-[0.2em] text-sm px-6 py-3 border border-primary/60 text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
+            SEE THE UNIVERSE
+          </Link>
         </motion.div>
 
         {/* Bottom CTA */}
