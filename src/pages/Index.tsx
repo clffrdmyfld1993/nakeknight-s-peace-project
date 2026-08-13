@@ -20,9 +20,24 @@ const Index = () => (
       }}
     />
     <PeacemakerHero />
-    <PeacemakerHero />
     <OfferLadder source="home" />
+    <section className="max-w-3xl mx-auto px-6 pb-16">
+      <p className="font-display tracking-[0.3em] text-xs text-primary mb-2">NOT READY TO BUY?</p>
+      <h2 className="font-display text-3xl md:text-4xl text-foreground mb-3">
+        GET EPISODE 01 + THE CASE FILE SAMPLER FREE
+      </h2>
+      <p className="text-muted-foreground mb-6">
+        One email a week: the new episode, the story behind it, and member-only drops.
+      </p>
+      <LeadCapture
+        source="home_ladder"
+        magnet="Episode 01 + Case File Sampler"
+        buttonLabel="SEND IT"
+        successMessage="Check your inbox — Episode 01 is on the way."
+      />
+    </section>
     <HeroProfile />
+
   </>
 );
 
