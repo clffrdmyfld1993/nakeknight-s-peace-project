@@ -26,8 +26,8 @@ export default function Referrals() {
   useEffect(() => {
     setRef(getStoredRef() ?? "");
     (async () => {
-      const { data } = await supabase.rpc("get_referral_counts");
-      if (Array.isArray(data)) setRows(data as Row[]);
+      const { data } = await supabase.functions.invoke("referral-leaderboard");
+      if (data && Array.isArray(data.rows)) setRows(data.rows as Row[]);
     })();
   }, []);
 
