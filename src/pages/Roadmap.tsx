@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Gamepad2, BookOpen, Boxes, Headphones, Glasses, Clapperboard } from "lucide-react";
 import SEO from "@/components/SEO";
-import LeadCapture from "@/components/LeadCapture";
+import { Link } from "react-router-dom";
 
 const MILESTONES = [
   {
@@ -114,18 +114,25 @@ export default function Roadmap() {
         </ol>
 
         <div className="mt-14 p-8 bg-card/60 border border-primary/30 rounded-lg">
-          <h2 className="font-display text-2xl text-foreground mb-2">Get notified at launch</h2>
+          <h2 className="font-display text-2xl text-foreground mb-2">No list. No inbox.</h2>
           <p className="text-muted-foreground mb-5 max-w-xl">
-            One email per milestone — no weekly newsletter, no filler. Early supporters get launch
-            pricing on anything physical.
+            We don't collect emails. Milestones ship publicly here and in the weekly Chronicles drop
+            — check back Fridays, or back the work now and get everything as it lands.
           </p>
-          <LeadCapture
-            source="roadmap"
-            magnet="Roadmap launch alerts"
-            buttonLabel="NOTIFY ME"
-            successMessage="You're on the list — we'll email you at the next milestone."
-          />
-
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/store"
+              className="font-display tracking-[0.2em] text-sm px-6 py-3 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              BACK THE UNIVERSE
+            </Link>
+            <Link
+              to="/chronicles"
+              className="font-display tracking-[0.2em] text-sm px-6 py-3 border border-border text-foreground hover:border-primary transition-colors"
+            >
+              LISTEN FREE
+            </Link>
+          </div>
         </div>
       </div>
     </div>
