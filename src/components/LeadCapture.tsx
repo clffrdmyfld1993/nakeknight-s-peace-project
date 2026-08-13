@@ -46,12 +46,12 @@ export default function LeadCapture({
       } catch {
         // ignore
       }
-      const { error } = await supabase.rpc("insert_lead_rate_limited", {
-        _email: parsed.data.email.toLowerCase(),
-        _source: source,
-        _magnet: magnet,
-        _referral_code: referral,
-        _user_agent:
+      const { error } = await supabase.from("leads").insert({
+        email: parsed.data.email.toLowerCase(),
+        source,
+        magnet: magnet ? magnet.slice(0, 200) : null,
+        referral_code: referral ? referral.slice(0, 120) : null,
+        user_agent:
           typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 500) : null,
       });
       if (error) throw error;
