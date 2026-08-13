@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Rocket, BookOpen, Gamepad2, Shirt, Wand2 } from "lucide-react";
 import SEO from "@/components/SEO";
-import LeadCapture from "@/components/LeadCapture";
+import { Link } from "react-router-dom";
 
 export default function Universe() {
   return (
@@ -50,20 +50,19 @@ export default function Universe() {
         <div className="p-6 md:p-8 bg-card/70 border border-primary/30 rounded-lg shadow-[0_0_80px_-40px_hsl(var(--primary))]">
           <div className="flex items-center gap-2 mb-2">
             <Rocket className="w-4 h-4 text-primary" />
-            <p className="font-display tracking-widest text-xs text-primary">IP LAUNCH LIST</p>
+            <p className="font-display tracking-widest text-xs text-primary">FOUNDER ACCESS</p>
           </div>
           <h2 className="font-display text-3xl text-foreground mb-2">Be first when the figures drop.</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Get launch-day access to physical drops, early comic previews, and the founder journal from behind the
-            universe. No spam — signal only.
+            We don't run a launch list — no emails collected, ever. Supporters of the archive get
+            launch-day access to physical drops and early comic previews automatically.
           </p>
-          <LeadCapture
-            source="universe_waitlist"
-            magnet="HeroDossier IP Launch List"
-            buttonLabel="JOIN WAITLIST"
-            successMessage="You're on the launch list. Watch for the first drop."
-            compact
-          />
+          <Link
+            to="/store"
+            className="inline-block font-display tracking-[0.2em] text-sm px-6 py-3 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+          >
+            BACK THE UNIVERSE
+          </Link>
         </div>
       </div>
     </div>

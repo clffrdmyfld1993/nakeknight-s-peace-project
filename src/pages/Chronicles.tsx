@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Calendar, Headphones, ChevronDown, ChevronUp, Sparkles, Loader2 } from "lucide-react";
 import SEO from "@/components/SEO";
+import { Link } from "react-router-dom";
 import AudioPlayer from "@/components/AudioPlayer";
 import ShareButtons from "@/components/ShareButtons";
-import LeadCapture from "@/components/LeadCapture";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackPlay } from "@/lib/track";
@@ -320,18 +320,18 @@ export default function Chronicles() {
         )}
 
         <div className="mt-16 p-6 md:p-8 bg-card/60 border border-primary/30 rounded-lg">
-          <p className="font-display tracking-widest text-xs text-primary mb-2">EPISODE ALERTS</p>
-          <h3 className="font-display text-2xl text-foreground mb-2">Get new chapters + exclusive lore</h3>
+          <p className="font-display tracking-widest text-xs text-primary mb-2">EVERY FRIDAY</p>
+          <h3 className="font-display text-2xl text-foreground mb-2">New chapters land here — no signup</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            One email per drop. No spam. Unsubscribe any time.
+            We don't run a mailing list and we don't store your email. Bookmark this page, or unlock
+            the full archive and every premium chapter for life.
           </p>
-          <LeadCapture
-            source="chronicles"
-            magnet="Chronicles Drop Alerts"
-            buttonLabel="ALERT ME"
-            successMessage="You're on the list. Next drop will hit your inbox."
-            compact
-          />
+          <Link
+            to="/store"
+            className="inline-block font-display tracking-[0.2em] text-sm px-6 py-3 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+          >
+            UNLOCK THE ARCHIVE
+          </Link>
         </div>
 
         <div className="mt-12 text-center text-[10px] tracking-[0.3em] text-muted-foreground">

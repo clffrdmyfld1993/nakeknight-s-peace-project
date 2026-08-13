@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { Download, Sparkles, Bot, Shield, Zap } from "lucide-react";
 import SEO from "@/components/SEO";
-import LeadCapture from "@/components/LeadCapture";
+import { Link } from "react-router-dom";
 
 const perks = [
   { icon: Bot, title: "AI Builder Blueprint", desc: "The exact stack, prompts, and workflow used to build NakeKnight end-to-end." },
   { icon: Shield, title: "Lore PDF", desc: "Origin, abilities, case files, and the visual codex — formatted for print." },
-  { icon: Zap, title: "Early Drops", desc: "New comics, art packs, and tools land in your inbox before the public store." },
+  { icon: Zap, title: "Early Drops", desc: "New comics, art packs, and tools go live to supporters before the public store." },
 ];
 
 export default function Join() {
@@ -29,7 +29,7 @@ export default function Join() {
             THE AI BUILDER<br />BLUEPRINT
           </h1>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            The exact stack, prompts, and workflow used to build the NakeKnight™ universe — entirely by AI. Plus the full Lore PDF.
+            The exact stack, prompts, and workflow used to build the NakeKnight™ universe — entirely by AI. Read it here, free, with no email required.
           </p>
         </motion.div>
 
@@ -39,12 +39,20 @@ export default function Join() {
           transition={{ delay: 0.1 }}
           className="flex justify-center mb-16"
         >
-          <LeadCapture
-            source="join-page"
-            magnet="AI Builder Blueprint + Lore PDF"
-            buttonLabel="SEND MY BLUEPRINT"
-            successMessage="On its way. Watch your inbox in the next few minutes."
-          />
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              to="/chronicles"
+              className="font-display tracking-[0.2em] text-sm px-6 py-3 bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              LISTEN FREE
+            </Link>
+            <Link
+              to="/store"
+              className="font-display tracking-[0.2em] text-sm px-6 py-3 border border-border text-foreground hover:border-primary transition-colors"
+            >
+              GET THE ARCHIVE
+            </Link>
+          </div>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-16">
