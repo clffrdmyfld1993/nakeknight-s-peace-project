@@ -36,3 +36,5 @@ verify_jwt = false
 verify_jwt = false
 
 
+[functions.referral-leaderboard]
+verify_jwt = false
