@@ -2,7 +2,7 @@ import PeacemakerHero from "@/components/PeacemakerHero";
 import HeroProfile from "@/components/HeroProfile";
 import OfferLadder from "@/components/OfferLadder";
 import SEO from "@/components/SEO";
-import LeadCapture from "@/components/LeadCapture";
+import { Link } from "react-router-dom";
 
 
 const Index = () => (
