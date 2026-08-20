@@ -245,6 +245,72 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          fee_cents: number
+          id: string
+          net_cents: number
+          sku: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+        }
+        Insert: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          fee_cents?: number
+          id?: string
+          net_cents?: number
+          sku?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          fee_cents?: number
+          id?: string
+          net_cents?: number
+          sku?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string
+          name: string
+          price_cents: number
+          sku: string
+          stripe_price_id: string | null
+          views: number
+        }
+        Insert: {
+          created_at?: string
+          name: string
+          price_cents?: number
+          sku: string
+          stripe_price_id?: string | null
+          views?: number
+        }
+        Update: {
+          created_at?: string
+          name?: string
+          price_cents?: number
+          sku?: string
+          stripe_price_id?: string | null
+          views?: number
+        }
+        Relationships: []
+      }
       referral_shares: {
         Row: {
           created_at: string
@@ -266,6 +332,30 @@ export type Database = {
           network?: string
           path?: string | null
           referral_code?: string | null
+        }
+        Relationships: []
+      }
+      webhook_events: {
+        Row: {
+          created_at: string
+          id: string
+          processed: boolean
+          stripe_event_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          processed?: boolean
+          stripe_event_id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          processed?: boolean
+          stripe_event_id?: string
+          type?: string
         }
         Relationships: []
       }
