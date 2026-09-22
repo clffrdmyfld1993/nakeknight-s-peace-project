@@ -104,9 +104,16 @@ export default function Store() {
       : [option.stripePriceId];
     addToCart(skus);
     beginCheckout(skus);
+    try {
+      const value = option.price + (bump ? ORDER_BUMP.price : 0);
+      localStorage.setItem("nk_last_checkout", JSON.stringify({ skus, value }));
+    } catch {
+      /* non-blocking */
+    }
     setLoading(true);
     startCheckout(prices, `store_${option.sku}`, () => setLoading(false));
   };
+
 
   const productLd = OPTIONS.map((o) => ({
     "@context": "https://schema.org",
