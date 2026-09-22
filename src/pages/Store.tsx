@@ -77,7 +77,7 @@ function TrustRow() {
 }
 
 export default function Store() {
-  const [selected, setSelected] = useState(HERO.sku);
+  const [selected, setSelected] = useState<string>(HERO.sku);
   const [bump, setBump] = useState(false);
   const [loading, setLoading] = useState(false);
   const { viewItem, addToCart, beginCheckout } = useAnalytics();
