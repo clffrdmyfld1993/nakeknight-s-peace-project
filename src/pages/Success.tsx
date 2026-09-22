@@ -5,7 +5,9 @@ import { CheckCircle2, Download, Loader2, AlertTriangle, ArrowRight, Headphones,
 import SEO from "@/components/SEO";
 import ShareButtons from "@/components/ShareButtons";
 import { supabase } from "@/integrations/supabase/client";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { toast } from "sonner";
+
 
 interface Fulfillment {
   paid: boolean;
