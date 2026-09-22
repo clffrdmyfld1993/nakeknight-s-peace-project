@@ -28,6 +28,8 @@ export default function Success() {
   const [data, setData] = useState<Fulfillment | null>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [sessionId, setSessionId] = useState<string>("");
+  const { purchase } = useAnalytics();
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
