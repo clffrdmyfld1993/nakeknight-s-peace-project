@@ -1,358 +1,275 @@
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import SEO from "@/components/SEO";
-import { Link } from "react-router-dom";
-import OfferLadder from "@/components/OfferLadder";
-import { ShoppingCart, Download, Bot, Sparkles, Loader2, Rocket } from "lucide-react";
-import { useEffect, useState } from "react";
-import { mockProducts, type Product } from "@/lib/medusa";
-import { supabase } from "@/integrations/supabase/client";
+import { Check, Loader2, Lock, ShieldCheck, Zap } from "lucide-react";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
+import { startCheckout } from "@/components/OfferLadder";
+import { useAnalytics } from "@/hooks/useAnalytics";
+import { ORDER_BUMP, SINGLES, TIERS } from "@/lib/catalog";
+import ogImage from "@/assets/og/brick-build-og.jpg";
 
-import ironPactImg from "@/assets/store/iron-pact-comic.jpg";
-import heroArtImg from "@/assets/store/hero-art-pack.jpg";
-import loreImg from "@/assets/store/lore-collection.jpg";
-import wallpaperImg from "@/assets/store/wallpaper-pack.jpg";
-import ashenImg from "@/assets/store/ashen-accord-comic.jpg";
-import soundtrackImg from "@/assets/store/soundtrack.jpg";
-
-const productImages: Record<string, string> = {
-  prod_001: ironPactImg,
-  prod_002: heroArtImg,
-  prod_003: loreImg,
-  prod_004: wallpaperImg,
-  prod_005: ashenImg,
-  prod_006: soundtrackImg,
+/**
+ * Two SKUs only. At low traffic, choice is the conversion killer —
+ * one hero product and one bundle, both instant digital downloads.
+ * Everything else stays live in Stripe for purchase history.
+ */
+const HERO = {
+  sku: SINGLES.brickBuild.sku,
+  name: "Brick Build PDF",
+  headline: "NakeKnight Brick Build — Printable PDF",
+  price: 5.99,
+  priceLabel: "$5.99",
+  stripePriceId: SINGLES.brickBuild.stripePriceId,
+  badge: "BEST SELLER",
+  includes: [
+    "Step-by-step build instruction PDF (print-ready)",
+    "Full parts list as CSV",
+    "Stud.io source file — remix it yourself",
+  ],
+  blurb:
+    "The complete brick-compatible build of the NakeKnight armour. Instructions, parts list and editable source file, downloadable the moment payment clears.",
 };
 
-const categories = ["All", "Comics", "Art Packs", "Lore", "Wallpapers", "Audio"];
+const BUNDLE = {
+  sku: TIERS[1].sku,
+  name: "Creator Pack",
+  headline: "Creator Pack — Build + Lore + 4K Renders",
+  price: 15.99,
+  priceLabel: "$15.99",
+  stripePriceId: TIERS[1].stripePriceId,
+  badge: "BEST VALUE",
+  includes: [
+    "Everything in the Brick Build PDF",
+    "Full illustrated Lore PDF",
+    "4K Render Pack — 5 print-grade images",
+  ],
+  blurb:
+    "Everything in one download. Bought separately this is $24.97 — the pack is $15.99.",
+  valueLabel: "$24.97",
+};
+
+const OPTIONS = [HERO, BUNDLE];
+
+function TrustRow() {
+  const rows = [
+    { icon: Lock, label: "Secure via Stripe", sub: "Link · Apple Pay · Google Pay · Card" },
+    { icon: Zap, label: "Instant download", sub: "No email list. Ever." },
+    { icon: ShieldCheck, label: "7-day guarantee", sub: "Full refund, no forms" },
+  ];
+  return (
+    <ul className="grid sm:grid-cols-3 gap-2 mt-3" aria-label="Purchase guarantees">
+      {rows.map(({ icon: Icon, label, sub }) => (
+        <li
+          key={label}
+          className="flex items-start gap-2 p-2.5 bg-card/60 border border-border rounded-md"
+        >
+          <Icon className="w-4 h-4 shrink-0 mt-0.5 text-primary" aria-hidden="true" />
+          <span className="min-w-0">
+            <span className="block font-display text-[10px] tracking-widest text-foreground">
+              {label.toUpperCase()}
+            </span>
+            <span className="block text-[11px] leading-snug text-muted-foreground">{sub}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export default function Store() {
-  const [filter, setFilter] = useState("All");
-  const [cart, setCart] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string>(HERO.sku);
+  const [bump, setBump] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { viewItem, addToCart, beginCheckout } = useAnalytics();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("status");
-    if (status === "success") {
-      toast.success("Payment complete — thank you!");
-      // GA4 conversion event (real conversion — fired only on Stripe success redirect)
-      if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
-        (window as any).gtag("event", "purchase", {
-          send_to: "G-28DS4V8XRT",
-          transaction_id: params.get("session_id") || `t_${Date.now()}`,
-          currency: "USD",
-        });
-      }
-      setCart([]);
-    } else if (status === "canceled") {
-      toast("Checkout canceled.");
-    }
-    if (status) {
-      window.history.replaceState({}, "", "/store");
-    }
-  }, []);
+    viewItem(OPTIONS.map((o) => o.sku));
+    const status = new URLSearchParams(window.location.search).get("status");
+    if (status === "canceled") toast("Checkout canceled — nothing was charged.");
+    if (status) window.history.replaceState({}, "", "/store");
+  }, [viewItem]);
 
-  const products = filter === "All" ? mockProducts : mockProducts.filter(p => p.category === filter);
+  const chosen = OPTIONS.find((o) => o.sku === selected) ?? HERO;
+  const total = useMemo(
+    () => chosen.price + (bump ? ORDER_BUMP.price : 0),
+    [chosen, bump],
+  );
 
-  const addToCart = (product: Product) => {
-    setCart(prev => [...prev, product]);
-    toast.success(`${product.title} added`);
-  };
-
-  const cartTotal = cart.reduce((sum, p) => sum + p.price, 0);
-
-  const checkout = async (items: Product[], key: string) => {
-    const lineItems = items
-      .filter(p => p.stripePriceId)
-      .reduce<Record<string, number>>((acc, p) => {
-        acc[p.stripePriceId!] = (acc[p.stripePriceId!] || 0) + 1;
-        return acc;
-      }, {});
-    const payload = Object.entries(lineItems).map(([price, quantity]) => ({ price, quantity }));
-    if (payload.length === 0) {
-      toast.error("This item isn't available for purchase yet.");
-      return;
-    }
-    const referral =
-      (typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("ref")
-        : null) ||
-      (typeof window !== "undefined" ? localStorage.getItem("nk_ref") : null);
-    setLoading(key);
+  const buy = (sku: string) => {
+    const option = OPTIONS.find((o) => o.sku === sku) ?? HERO;
+    setSelected(sku);
+    const skus = bump ? [option.sku, ORDER_BUMP.sku] : [option.sku];
+    const prices = bump
+      ? [option.stripePriceId, ORDER_BUMP.stripePriceId]
+      : [option.stripePriceId];
+    addToCart(skus);
+    beginCheckout(skus);
     try {
-      const { data, error } = await supabase.functions.invoke("create-payment", {
-        body: { items: payload, referral, source: "store" },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        throw new Error(data?.error || "No checkout URL returned");
-      }
-    } catch (e: any) {
-      toast.error(e?.message || "Checkout failed");
-    } finally {
-      setLoading(null);
+      const value = option.price + (bump ? ORDER_BUMP.price : 0);
+      localStorage.setItem("nk_last_checkout", JSON.stringify({ skus, value }));
+    } catch {
+      /* non-blocking */
     }
+    setLoading(true);
+    startCheckout(prices, `store_${option.sku}`, () => setLoading(false));
   };
+
+
+  const productLd = OPTIONS.map((o) => ({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: o.headline,
+    sku: o.sku,
+    description: o.blurb,
+    brand: { "@type": "Brand", name: "NakeKnight" },
+    image: `https://herodossier.lovable.app${ogImage}`,
+    offers: {
+      "@type": "Offer",
+      price: o.price.toFixed(2),
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: "https://herodossier.lovable.app/store",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  }));
 
   return (
-    <div className="min-h-screen bg-background font-body pt-14">
+    <div className="min-h-screen bg-background font-body pt-14 pb-28">
       <SEO
-        title="NakeKnight™ Content Store — Comics, Art & Soundtracks"
-        description="Buy NakeKnight digital drops: comics, art packs, wallpapers, lore collections, and AI-composed soundtracks. Instant download via Stripe."
+        title="NakeKnight Brick Build PDF — Instructions $5.99 Instant Download"
+        description="Brick-compatible NakeKnight build: printable instruction PDF, parts CSV and Stud.io file for $5.99. Instant download, no email list, 7-day guarantee."
         path="/store"
-        jsonLd={[
-          {
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            name: "NakeKnight Content Store",
-            url: "https://herodossier.lovable.app/store",
-            description:
-              "Digital comics, art packs, wallpapers, lore, and soundtracks from the NakeKnight universe.",
-            hasPart: mockProducts.map((p) => ({
-              "@type": "Product",
-              name: p.title,
-              description: p.description,
-              category: p.category,
-              brand: { "@type": "Brand", name: "NakeKnight" },
-              offers: {
-                "@type": "Offer",
-                price: p.price.toFixed(2),
-                priceCurrency: "USD",
-                availability: "https://schema.org/InStock",
-                url: "https://herodossier.lovable.app/store",
-              },
-            })),
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            itemListElement: mockProducts.map((p, i) => ({
-              "@type": "ListItem",
-              position: i + 1,
-              name: p.title,
-            })),
-          },
-        ]}
+        image={ogImage}
+        jsonLd={productLd}
       />
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
+
+      <div className="max-w-5xl mx-auto px-6 py-16">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
           <p className="text-primary font-display tracking-[0.3em] mb-2">DIGITAL ARMORY</p>
-          <h1 className="font-display text-6xl md:text-7xl text-foreground mb-4">NAKEKNIGHT™ CONTENT STORE</h1>
+          <h1 className="font-display text-5xl md:text-6xl text-foreground mb-4">
+            NAKEKNIGHT BRICK BUILD — INSTANT PDF
+          </h1>
           <p className="text-muted-foreground max-w-xl">
-            Comics, art, lore, and soundtracks — all AI-generated, all from the NakeKnight™ universe.
+            Two ways to buy. Both are instant downloads — no shipping, no account,
+            no mailing list. Your email is used once, to send the file link.
           </p>
         </motion.div>
 
-        {/* Money ladder — entry, recurring, flagship */}
-        <div className="-mx-6 mb-4">
-          <OfferLadder source="store" />
+        <div className="grid md:grid-cols-2 gap-4 items-stretch">
+          {OPTIONS.map((o, i) => {
+            const active = o.sku === selected;
+            return (
+              <motion.article
+                key={o.sku}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+                onMouseEnter={() => setSelected(o.sku)}
+                className={`relative p-6 rounded-lg flex flex-col border ${
+                  active
+                    ? "bg-primary/10 border-primary shadow-[0_0_60px_-30px_hsl(var(--primary))]"
+                    : "bg-card border-border"
+                }`}
+              >
+                <span className="absolute top-3 right-3 px-2 py-0.5 bg-primary text-primary-foreground font-display text-[9px] tracking-widest rounded-sm">
+                  {o.badge}
+                </span>
+                <h2 className="font-display text-2xl text-foreground mb-1">{o.name}</h2>
+                <p className="text-[11px] tracking-widest text-muted-foreground mb-4">{o.sku}</p>
+                <p className="text-sm text-muted-foreground mb-4">{o.blurb}</p>
+
+                <div className="mb-4">
+                  {"valueLabel" in o && o.valueLabel && (
+                    <span className="text-sm text-muted-foreground line-through mr-2">
+                      {o.valueLabel}
+                    </span>
+                  )}
+                  <span className="font-display text-4xl text-primary">{o.priceLabel}</span>
+                </div>
+
+                <ul className="space-y-2 mb-6 flex-1">
+                  {o.includes.map((line) => (
+                    <li key={line} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={() => buy(o.sku)}
+                  disabled={loading}
+                  className={`inline-flex items-center justify-center gap-2 px-4 py-3 font-display text-xs tracking-widest rounded-sm disabled:opacity-60 ${
+                    active
+                      ? "bg-primary text-primary-foreground hover:opacity-90"
+                      : "bg-primary/10 text-primary hover:bg-primary/20"
+                  }`}
+                >
+                  {loading && active && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
+                  BUY {o.priceLabel} — INSTANT DOWNLOAD
+                </button>
+              </motion.article>
+            );
+          })}
         </div>
 
-        {/* Bundles */}
-        <div className="grid md:grid-cols-3 gap-4 mb-12">
-          <div className="p-6 bg-card border border-border rounded-lg">
-            <p className="font-display text-[10px] tracking-[0.3em] text-muted-foreground mb-2">CASE FILES</p>
-            <h3 className="font-display text-2xl text-foreground mb-2">Case Files + AI Prompts</h3>
-            <p className="text-sm text-muted-foreground mb-4">Every case file + the AI prompts that built them. Instant download.</p>
-            <div className="flex items-center justify-between">
-              <span className="font-display text-3xl text-primary">$15</span>
-              <button
-                onClick={() => checkout([{ id: "case_files", title: "Case Files + AI Prompts", description: "", price: 15, priceFormatted: "$15", category: "Lore", stripePriceId: "price_1TePGgQaKvygaDfu3DJTEJm4" } as any], "bundle_cases")}
-                disabled={loading === "bundle_cases"}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-display text-xs tracking-widest rounded-sm hover:bg-primary/20 disabled:opacity-60"
-              >
-                {loading === "bundle_cases" && <Loader2 className="w-3.5 h-3.5 animate-spin" />} BUY $15
-              </button>
-            </div>
-          </div>
+        {/* Trust row sits directly under the buy buttons */}
+        <TrustRow />
 
-          <div className="p-6 bg-primary/10 border border-primary rounded-lg shadow-[0_0_60px_-30px_hsl(var(--primary))]">
-            <p className="font-display text-[10px] tracking-[0.3em] text-primary mb-2">PREMIUM CHRONICLES</p>
-            <h3 className="font-display text-2xl text-foreground mb-2">Lifetime Audio Access</h3>
-            <p className="text-sm text-muted-foreground mb-4">Every premium episode — past, present, and future. One payment, lifetime access.</p>
-            <div className="flex items-center justify-between">
-              <span className="font-display text-3xl text-primary">$29</span>
-              <button
-                onClick={() => checkout([{ id: "premium_lifetime", title: "Premium Chronicles Lifetime", description: "", price: 29, priceFormatted: "$29", category: "Audio", stripePriceId: "price_1TelQGQaKvygaDfuazPCyTBv" } as any], "bundle_premium")}
-                disabled={loading === "bundle_premium"}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display text-xs tracking-widest rounded-sm hover:opacity-90 disabled:opacity-60"
-              >
-                {loading === "bundle_premium" && <Loader2 className="w-3.5 h-3.5 animate-spin" />} UNLOCK $29
-              </button>
-            </div>
-          </div>
-
-          <div className="p-6 bg-card border border-primary/40 rounded-lg relative overflow-hidden">
-            <span className="absolute top-3 right-3 px-2 py-0.5 bg-primary text-primary-foreground font-display text-[9px] tracking-widest rounded-sm">BEST VALUE</span>
-            <p className="font-display text-[10px] tracking-[0.3em] text-primary mb-2">GET BOTH</p>
-            <h3 className="font-display text-2xl text-foreground mb-2">Case Files + Chronicles</h3>
-            <p className="text-sm text-muted-foreground mb-4">Every case file, every prompt, every premium episode — for life.</p>
-            <div className="flex items-center justify-between">
-              <span className="font-display text-3xl text-primary">$44</span>
-              <button
-                onClick={() => checkout([
-                  { id: "case_files", title: "Case Files + AI Prompts", description: "", price: 15, priceFormatted: "$15", category: "Lore", stripePriceId: "price_1TePGgQaKvygaDfu3DJTEJm4" } as any,
-                  { id: "premium_lifetime", title: "Premium Chronicles Lifetime", description: "", price: 29, priceFormatted: "$29", category: "Audio", stripePriceId: "price_1TelQGQaKvygaDfuazPCyTBv" } as any,
-                ], "bundle_both")}
-                disabled={loading === "bundle_both"}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display text-xs tracking-widest rounded-sm hover:opacity-90 disabled:opacity-60"
-              >
-                {loading === "bundle_both" && <Loader2 className="w-3.5 h-3.5 animate-spin" />} BUY BOTH
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Cart indicator */}
-        {cart.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8 p-4 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-between"
+        {/* Order bump */}
+        <label className="mt-4 flex items-start gap-3 p-4 bg-card border border-dashed border-primary/40 rounded-lg cursor-pointer">
+          <span
+            className={`mt-0.5 w-4 h-4 shrink-0 rounded-sm border flex items-center justify-center ${
+              bump ? "bg-primary border-primary" : "border-muted-foreground/50"
+            }`}
           >
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-primary" />
-              <span className="text-foreground font-display">{cart.length} ITEMS — ${cartTotal.toFixed(2)}</span>
-            </div>
-            <button
-              onClick={() => checkout(cart, "cart")}
-              disabled={loading === "cart"}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-display text-sm tracking-wider rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
-            >
-              {loading === "cart" && <Loader2 className="w-4 h-4 animate-spin" />}
-              CHECKOUT
-            </button>
-          </motion.div>
-        )}
+            {bump && <Check className="w-3 h-3 text-primary-foreground" aria-hidden="true" />}
+          </span>
+          <input
+            type="checkbox"
+            className="sr-only"
+            checked={bump}
+            onChange={(e) => setBump(e.target.checked)}
+          />
+          <span className="text-sm text-muted-foreground">
+            <span className="text-foreground font-display tracking-wide">
+              ADD {ORDER_BUMP.name.toUpperCase()} — {ORDER_BUMP.priceLabel} MORE
+            </span>
+            <br />
+            {ORDER_BUMP.blurb}
+          </span>
+        </label>
 
-        {/* Category filter */}
-        <div className="flex flex-wrap gap-2 mb-10">
-          {categories.map(c => (
-            <button
-              key={c}
-              onClick={() => setFilter(c)}
-              className={`px-4 py-1.5 font-display text-sm tracking-wider rounded-sm transition-colors ${
-                filter === c
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card border border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {c.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        <p className="mt-6 text-xs text-muted-foreground">
+          Digital goods only — no shipping address is ever collected. Email is
+          requested at checkout purely to deliver your file link, and is never
+          marketed to.
+        </p>
+      </div>
 
-        {/* Product grid */}
-        <h2 className="font-display text-3xl text-foreground mb-6">FEATURED DROPS</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product, i) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors group"
-            >
-              {/* Thumbnail */}
-              <div className="relative h-48 bg-muted overflow-hidden">
-                {productImages[product.id] ? (
-                  <img
-                    src={productImages[product.id]}
-                    alt={product.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <Sparkles className="w-12 h-12 text-primary/20" />
-                  </div>
-                )}
-                {product.badge && (
-                  <span className="absolute top-3 right-3 px-2 py-0.5 bg-primary text-primary-foreground font-display text-[10px] tracking-widest rounded-sm">
-                    {product.badge}
-                  </span>
-                )}
-              </div>
-
-              <div className="p-5">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="font-display text-xl text-foreground leading-tight">{product.title}</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
-
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-display text-2xl text-primary">{product.priceFormatted}</span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="px-3 py-1.5 bg-primary/10 text-primary font-display text-xs tracking-wider rounded-sm hover:bg-primary/20 transition-colors"
-                    >
-                      ADD
-                    </button>
-                    <button
-                      onClick={() => checkout([product], product.id)}
-                      disabled={loading === product.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground font-display text-xs tracking-wider rounded-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
-                    >
-                      {loading === product.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-                      BUY
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex items-center gap-1 text-[10px] text-primary/50">
-                  <Bot className="w-3 h-3" /> AI-Generated • Digital Download
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Coming Soon — universe waitlist */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-16 p-6 md:p-8 bg-card/70 border border-primary/30 rounded-lg shadow-[0_0_80px_-40px_hsl(var(--primary))]"
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <Rocket className="w-4 h-4 text-primary" />
-            <p className="font-display tracking-widest text-xs text-primary">COMING SOON — HERODOSSIER UNIVERSE</p>
+      {/* Sticky order summary — total is final, no surprises at the last step */}
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur">
+        <div className="max-w-5xl mx-auto px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="text-sm">
+            <span className="font-display tracking-widest text-[10px] text-muted-foreground block">
+              ORDER SUMMARY
+            </span>
+            <span className="text-foreground">
+              {chosen.name}
+              {bump && ` + ${ORDER_BUMP.name}`} —{" "}
+              <span className="font-display text-primary">${total.toFixed(2)}</span>{" "}
+              <span className="text-muted-foreground">total, tax and fees included</span>
+            </span>
           </div>
-          <h3 className="font-display text-3xl md:text-4xl text-foreground mb-2">
-            Action Figures · Comics · RPG Modules
-          </h3>
-          <p className="text-sm text-muted-foreground max-w-xl mb-4">
-            NakeKnight is the audio gateway to a full founder-owned IP universe. No waitlist, no email
-            harvesting — buyers get first access to every physical drop automatically.
-          </p>
-          <Link
-            to="/universe"
-            className="inline-block font-display tracking-[0.2em] text-sm px-6 py-3 border border-primary/60 text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+          <button
+            onClick={() => buy(chosen.sku)}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-display text-xs tracking-widest rounded-sm hover:opacity-90 disabled:opacity-60"
           >
-            SEE THE UNIVERSE
-          </Link>
-        </motion.div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-16 text-center"
-        >
-          <p className="text-muted-foreground text-sm">
-            More content drops every week. All products are AI-generated digital downloads.
-          </p>
-        </motion.div>
+            {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
+            CHECKOUT ${total.toFixed(2)}
+          </button>
+        </div>
       </div>
     </div>
   );
