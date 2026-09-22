@@ -53,15 +53,15 @@ export default function Success() {
           localStorage.setItem("nk_premium_session", sid);
         }
 
-        // GA4 purchase event
-        if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
-          (window as any).gtag("event", "purchase", {
-            send_to: "G-28DS4V8XRT",
-            transaction_id: sid,
-            currency: "USD",
-            referral_code: d.referral_code ?? undefined,
-          });
+        // GA4 purchase — fired exactly once per transaction id.
+        try {
+          const raw = localStorage.getItem("nk_last_checkout");
+          const last = raw ? JSON.parse(raw) : null;
+          purchase(sid, Array.isArray(last?.skus) ? last.skus : [], last?.value);
+        } catch {
+          purchase(sid, []);
         }
+
       } catch (e: any) {
         setState("error");
         setErrorMsg(e?.message || "Could not verify purchase.");
