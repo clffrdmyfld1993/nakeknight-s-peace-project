@@ -4,12 +4,35 @@
 // Nothing is simulated. Zero means zero.
 import Stripe from "https://esm.sh/stripe@18.5.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+const allowedOrigins = new Set([
+  "https://nakeknight.sonickurrent.space",
+  "http://localhost:8080",
+]);
 
-const SITE_URL = "https://herodossier.lovable.app/";
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get("origin");
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type, x-admin-token",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Vary": "Origin",
+  };
+  if (origin && allowedOrigins.has(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+  return headers;
+}
+
+function sameToken(expected: string, supplied: string): boolean {
+  if (expected.length !== supplied.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < expected.length; i++) {
+    mismatch |= expected.charCodeAt(i) ^ supplied.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
+const SITE_URL = "https://nakeknight.sonickurrent.space/";
 const GATEWAY =
   "https://connector-gateway.lovable.dev/google_search_console/webmasters/v3";
 
@@ -67,7 +90,16 @@ async function gsc(): Promise<
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders(req) });
+
+  const expectedToken = Deno.env.get("ADMIN_TOKEN");
+  const suppliedToken = req.headers.get("x-admin-token") || "";
+  if (!expectedToken || !sameToken(expectedToken, suppliedToken)) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
@@ -170,13 +202,13 @@ Deno.serve(async (req) => {
         series,
         search,
       }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { status: 200, headers: { ...corsHeaders(req), "Content-Type": "application/json" } },
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });
