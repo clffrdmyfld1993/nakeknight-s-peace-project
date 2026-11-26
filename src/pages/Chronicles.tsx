@@ -229,7 +229,7 @@ export default function Chronicles() {
             "@context": "https://schema.org",
             "@type": "PodcastSeries",
             name: "NakeKnight Chronicles",
-            url: "https://herodossier.lovable.app/chronicles",
+            url: "https://nakeknight.sonickurrent.space/chronicles",
             description:
               "Serialized audio drama following NakeKnight — The Peacemaker — an empathic mediator navigating a staged reality. Built entirely by AI.",
             author: { "@type": "Organization", name: "NakeKnight" },
@@ -241,7 +241,7 @@ export default function Chronicles() {
             name: `EP ${e.episode_number.toString().padStart(2, "0")} — ${e.title}`,
             description: e.description ?? undefined,
             datePublished: e.release_date,
-            url: `https://herodossier.lovable.app/chronicles#ep-${e.episode_number}`,
+            url: `https://nakeknight.sonickurrent.space/chronicles#ep-${e.episode_number}`,
             partOfSeries: { "@type": "PodcastSeries", name: "NakeKnight Chronicles" },
           })),
         ]}
