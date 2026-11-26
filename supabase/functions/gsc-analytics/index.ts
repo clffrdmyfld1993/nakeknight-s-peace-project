@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const SITE_URL = "https://herodossier.lovable.app/";
+const SITE_URL = "https://nakeknight.sonickurrent.space/";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_search_console/webmasters/v3";
 
 interface Body {
