@@ -119,7 +119,7 @@ export default function Analytics() {
             <h1 className="font-display text-5xl md:text-6xl text-foreground">SEARCH ANALYTICS</h1>
             <p className="text-muted-foreground mt-2">
               Pulled live from Google Search Console for{" "}
-              <span className="text-foreground">herodossier.lovable.app</span>.
+              <span className="text-foreground">nakeknight.sonickurrent.space</span>.
             </p>
           </div>
           <div className="flex items-center gap-2">
