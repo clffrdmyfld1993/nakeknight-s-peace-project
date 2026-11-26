@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const CONTACT_EMAIL = "afterglow619@proton.me";
-const SITE = "https://herodossier.lovable.app";
+const SITE = "https://nakeknight.sonickurrent.space";
 
 const boilerplate = `NakeKnight™ is an AI-native superhero IP. Site, art, lore, store, video, and operational dashboards are generated with AI tooling (Lovable + Claude + Gemini). The brand operates a live Stripe storefront, a verified Google Search Console property, and sitewide GA4 analytics. Every operational number published on herodossier.lovable.app is pulled live from Stripe, GSC, or GA4 — no simulated metrics.`;
 
