@@ -7,8 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const SITE_URL = "https://herodossier.lovable.app/";
-const SITEMAP_URL = "https://herodossier.lovable.app/sitemap.xml";
+const SITE_URL = "https://nakeknight.sonickurrent.space/";
+const SITEMAP_URL = "https://nakeknight.sonickurrent.space/sitemap.xml";
 const GATEWAY = "https://connector-gateway.lovable.dev/google_search_console";
 
 interface InspectionResult {
