@@ -606,7 +606,7 @@ export default function AdminUpload() {
             <h2 className="font-display tracking-widest text-sm">AI CONTENT FACTORY</h2>
           </div>
           <p className="text-xs text-muted-foreground">
-            Text: Lovable AI (Gemini, free tier). Audio: any OpenAI-compatible TTS pointed at{" "}
+            Text: creator-reviewed writing workflow. Audio: any OpenAI-compatible TTS pointed at{" "}
             <code className="text-primary">CUSTOM_TTS_BASE_URL</code> — e.g. a Kokoro-FastAPI
             instance or HuggingFace Space exposing <code>/v1/audio/speech</code>. Episode # uses the
             value from the form above ({episodeNumber}).
