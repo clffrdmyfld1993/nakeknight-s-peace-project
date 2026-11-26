@@ -6,6 +6,7 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 
 const allowedOrigins = new Set([
   "https://nakeknight.sonickurrent.space",
+  "https://nakeknight.sonickurrent.chatgpt.site",
   "http://localhost:8080",
 ]);
 
