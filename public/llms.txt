@@ -1,13 +1,13 @@
 # NakeKnight™
 
-> NakeKnight is an AI-native superhero IP — The Peacemaker who resolves conflict through mediation. Digital comics, art, costumes, soundtracks, and licensing.
+> NakeKnight is a creator-led, LGBTQIA+-positive superhero for the weekday grind. He helps turn everyday conflict into practical next steps through nonviolent communication. In the story, he crosses timelines through speculative proton energy; his attire adapts to the era while his face remains consistent.
 
 ## Pages
 
-- [Dossier](/): Hero profile, origin story, abilities, case files.
-- [Command](/command): AI tooling and live business facts.
-- [Store](/store): Digital comics, art packs, lore, wallpapers, and soundtrack ($2.99–$14.99).
-- [Costumes](/costumes): AI-generated costume variants across eras for licensing.
+- [Dossier](/): The Workplace Peacemaker; conflict-resolution method and timeline identity.
+- [Command](/command): Project operations and current development information.
+- [Store](/store): Digital products and creator releases; availability and pricing are shown only when verified.
+- [Costumes](/costumes): Era-specific timeline costumes and character identity.
 - [License](/license): Merchandise, publishing, gaming, film & media licensing tiers.
 - [Pitch](/pitch): Investor pitch for the NakeKnight™ seed round.
 - [Social](/social): Promo reels and social channels.
