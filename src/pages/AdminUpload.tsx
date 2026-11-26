@@ -153,7 +153,7 @@ export default function AdminUpload() {
         `🎙️ NEW NAKEKNIGHT DROP\n\n` +
         `EP${String(episodeNumber).padStart(2, "0")} — ${title}\n\n` +
         `Free episodes weekly. Lifetime access $29.\n` +
-        `Listen → https://herodossier.lovable.app/chronicles\n\n` +
+        `Listen → https://nakeknight.sonickurrent.space/chronicles\n\n` +
         `#audiodrama #ai #nakeknight`;
       setLastShareText(template);
 
