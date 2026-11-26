@@ -55,13 +55,13 @@ const principles = [
     icon: Bot,
     title: "BUILT ENTIRELY BY AI",
     body:
-      "Site, art, lore, store, edge functions, and operational dashboards generated and iterated through Lovable + Claude with human direction.",
+      "Creator-led superhero IP developed with AI-assisted writing, design, and software workflows.",
   },
   {
     icon: Code2,
     title: "TRANSPARENT STACK",
     body:
-      "Frontend: React + Vite + Tailwind. Backend: Lovable Cloud (Supabase Edge Functions). Payments: Stripe. Search: GSC. Analytics: GA4.",
+      "The current app uses React, Vite, Tailwind, Supabase, and Stripe. Service integrations will be verified before the independent site is launched.",
   },
   {
     icon: Sparkles,
@@ -110,7 +110,7 @@ export default function About() {
                 acceptedAnswer: {
                   "@type": "Answer",
                   text:
-                    "Yes. Code, art, lore, video, and edge functions are generated with AI tooling (Lovable + Claude + Gemini image/video). Human direction guides product, story and licensing decisions.",
+                    "AI assists with writing, visual development, and software work. The creator directs the product, story, and licensing decisions.",
                 },
               },
               {
