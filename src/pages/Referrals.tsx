@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { getStoredRef } from "@/components/RefCapture";
 
-const SITE = "https://herodossier.lovable.app";
+const SITE = "https://nakeknight.sonickurrent.space";
 
 interface Row {
   referral_code: string;
