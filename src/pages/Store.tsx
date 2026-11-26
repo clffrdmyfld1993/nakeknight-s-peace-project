@@ -122,13 +122,13 @@ export default function Store() {
     sku: o.sku,
     description: o.blurb,
     brand: { "@type": "Brand", name: "NakeKnight" },
-    image: `https://herodossier.lovable.app${ogImage}`,
+    image: `https://nakeknight.sonickurrent.space${ogImage}`,
     offers: {
       "@type": "Offer",
       price: o.price.toFixed(2),
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
-      url: "https://herodossier.lovable.app/store",
+      url: "https://nakeknight.sonickurrent.space/store",
       itemCondition: "https://schema.org/NewCondition",
     },
   }));
