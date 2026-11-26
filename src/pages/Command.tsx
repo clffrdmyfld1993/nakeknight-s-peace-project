@@ -125,7 +125,12 @@ export default function Command() {
         if (data?.error) throw new Error(data.error);
         setStats(data as Stats);
       } catch (e) {
-        if (!cancelled) setErr(e instanceof Error ? e.message : "Unable to load private finance data.");
+        if (!cancelled) {
+          setErr(e instanceof Error ? e.message : "Unable to load private finance data.");
+          localStorage.removeItem(TOKEN_KEY);
+          setAdminToken("");
+          setUnlocked(false);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -174,6 +179,7 @@ export default function Command() {
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Enter the project admin token to view live Stripe and Search Console figures.
             </p>
+            {err && <p role="alert" className="mt-4 text-sm text-destructive">{err}</p>}
             <form
               className="mt-6 space-y-3"
               onSubmit={(event) => {
@@ -181,6 +187,7 @@ export default function Command() {
                 const value = adminToken.trim();
                 if (!value) return;
                 localStorage.setItem(TOKEN_KEY, value);
+                setErr(null);
                 setUnlocked(true);
               }}
             >
