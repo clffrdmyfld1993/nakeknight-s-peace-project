@@ -122,7 +122,7 @@ export default function License() {
       "Message:",
       d.message,
       "",
-      "— Sent from herodossier.lovable.app/license",
+      "— Sent from nakeknight.sonickurrent.space/license",
     ]
       .filter(Boolean)
       .join("\n");
