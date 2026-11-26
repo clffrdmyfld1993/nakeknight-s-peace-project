@@ -11,7 +11,7 @@ interface SEOProps {
   image?: string;
 }
 
-const BASE = "https://herodossier.lovable.app";
+const BASE = "https://nakeknight.sonickurrent.space";
 
 export default function SEO({ title, description, path, jsonLd, noindex, preloadImage, image }: SEOProps) {
   const url = `${BASE}${path}`;
