@@ -4,7 +4,7 @@ import { Copy, Sparkles } from "lucide-react";
 import SEO from "@/components/SEO";
 import { toast } from "sonner";
 
-const SITE = "https://herodossier.lovable.app";
+const SITE = "https://nakeknight.sonickurrent.space";
 
 const assets = [
   {
