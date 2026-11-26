@@ -30,7 +30,7 @@ const traction = [
   { metric: "Licensing Tiers Defined", value: "4" },
   { metric: "Public Site Routes", value: "8" },
   { metric: "Payment Provider", value: "Stripe" },
-  { metric: "Backend", value: "Lovable Cloud" },
+  { metric: "Backend", value: "Supabase" },
   { metric: "Outside Capital Raised", value: "$0" },
 ];
 
@@ -239,7 +239,7 @@ export default function Pitch() {
               what traditionally takes a team of 50, imagine what happens when we scale.
             </p>
             <div className="flex flex-wrap gap-2">
-              {["Lovable", "Claude", "GPT-4", "Midjourney", "DALL·E", "Remotion", "Medusa"].map(tool => (
+              {["Creator-led", "AI-assisted", "React", "TypeScript", "Supabase", "Stripe"].map(tool => (
                 <span key={tool} className="px-3 py-1 bg-primary/10 text-primary text-xs font-display tracking-wider rounded-sm">
                   {tool}
                 </span>
@@ -273,7 +273,7 @@ export default function Pitch() {
         {/* Footer note */}
         <div className="py-12 text-center">
           <p className="text-xs text-muted-foreground">
-            This pitch deck was built entirely by AI using Lovable. NakeKnight™ is a fictional IP created for entertainment purposes.
+            NakeKnight™ is an original, creator-led fictional superhero IP developed for entertainment and licensing.
           </p>
         </div>
       </div>
