@@ -66,7 +66,7 @@ export default function BlogPost() {
   const post = slug ? getPostBySlug(slug) : undefined;
   if (!post) return <NotFound />;
 
-  const url = `https://herodossier.lovable.app/blog/${post.slug}`;
+  const url = `https://nakeknight.sonickurrent.space/blog/${post.slug}`;
   const articleLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -77,11 +77,11 @@ export default function BlogPost() {
     keywords: post.keywords.join(", "),
     articleSection: post.category,
     mainEntityOfPage: url,
-    author: { "@type": "Organization", name: "NakeKnight™", url: "https://herodossier.lovable.app/about" },
+    author: { "@type": "Organization", name: "NakeKnight™", url: "https://nakeknight.sonickurrent.space/about" },
     publisher: {
       "@type": "Organization",
       name: "NakeKnight™",
-      url: "https://herodossier.lovable.app",
+      url: "https://nakeknight.sonickurrent.space",
     },
   };
 
@@ -89,8 +89,8 @@ export default function BlogPost() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Field Notes", item: "https://herodossier.lovable.app/blog" },
-      { "@type": "ListItem", position: 2, name: post.category, item: `https://herodossier.lovable.app/blog?category=${encodeURIComponent(post.category)}` },
+      { "@type": "ListItem", position: 1, name: "Field Notes", item: "https://nakeknight.sonickurrent.space/blog" },
+      { "@type": "ListItem", position: 2, name: post.category, item: `https://nakeknight.sonickurrent.space/blog?category=${encodeURIComponent(post.category)}` },
       { "@type": "ListItem", position: 3, name: post.title, item: url },
     ],
   };
