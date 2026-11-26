@@ -9,7 +9,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-admin-token, x-cron-secret",
 };
 
-const SITE = "https://herodossier.lovable.app";
+const SITE = "https://nakeknight.sonickurrent.space";
 
 const PROMO_SYSTEM =
   "You are the social growth writer for NakeKnight Chronicles — a PG, all-ages, funny and adventurous audio serial about knights who removed their armor as a symbol of kindness and peace. " +
