@@ -6,7 +6,7 @@ const steps = [
   { icon: Sparkles, label: "Idea", desc: "One concept: a hero who fights with fairness, not fists.", tool: "Human Creativity" },
   { icon: Palette, label: "Character Design", desc: "Full character art, hero portrait, and visual identity.", tool: "Midjourney + DALL·E" },
   { icon: FileText, label: "World Building", desc: "10 case files, origin story, testimonials, deep lore.", tool: "Claude + GPT-4" },
-  { icon: Code2, label: "Website", desc: "This entire site — every page, animation, and interaction.", tool: "Lovable" },
+  { icon: Code2, label: "Website", desc: "This entire site — every page, animation, and interaction.", tool: "React + Vite" },
   { icon: TrendingUp, label: "Business Strategy", desc: "Revenue streams, licensing tiers, investor pitch.", tool: "Claude" },
   { icon: Globe, label: "Launch", desc: "Digital store, licensing portal, and investor deck — live.", tool: "All AI" },
 ];
