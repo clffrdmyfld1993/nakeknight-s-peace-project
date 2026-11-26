@@ -20,3 +20,9 @@ His superpower is practical, nonviolent communication: he helps people name the 
 - Respect people across identities, roles, and backgrounds.
 - Make conflicts understandable and next steps tangible.
 - Avoid promises that the site cannot deliver, unverified product prices, and claims of working checkout or memberships until those functions are checked end to end.
+
+## Timeline travel canon
+
+NakeKnight understands each reality as a solid-state material world. In the story's speculative science, he harnesses proton energy to split a water molecule and release the energy needed to cross a timeline. This is fictional superhero physics, not a real-world scientific claim.
+
+He can choose where and when he arrives. His clothing adapts to the destination and era: medieval leather, contemporary workwear, futuristic TRON-like suits, and other timeline-specific designs. The outfit may change dramatically; the canonical face and recognizable identity remain constant in every timeline.
