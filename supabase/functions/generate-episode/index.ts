@@ -84,7 +84,7 @@ serve(async (req) => {
       `"reddit_post": {"title": string, "body": string (200-350 words, for r/audiodrama)}, ` +
       `"ig_caption": string (under 300 chars, 3-5 hashtags), ` +
       `"video_script": string (30-second vertical video script, VO + on-screen text cues)}. ` +
-      `Every URL in the copy must be exactly "https://herodossier.lovable.app/chronicles?ref=REF_CODE" so the caller can substitute.`;
+      `Every URL in the copy must be exactly "https://nakeknight.sonickurrent.space/chronicles?ref=REF_CODE" so the caller can substitute.`;
 
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
