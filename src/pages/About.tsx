@@ -83,12 +83,12 @@ export default function About() {
             "@context": "https://schema.org",
             "@type": "AboutPage",
             name: "About NakeKnight",
-            url: "https://herodossier.lovable.app/about",
+            url: "https://nakeknight.sonickurrent.space/about",
             mainEntity: {
               "@type": "Organization",
               name: "NakeKnight",
               alternateName: "NakeKnight™",
-              url: "https://herodossier.lovable.app/",
+              url: "https://nakeknight.sonickurrent.space/",
               email: CONTACT_EMAIL,
               description:
                 "AI-native superhero IP with a live storefront, verified search property, and transparent build process.",
