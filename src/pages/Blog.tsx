@@ -24,14 +24,14 @@ export default function Blog() {
     name: "NakeKnight™ Field Notes",
     description:
       "Case studies and breakdowns from an AI-driven business: how one operator + AI built and ships a verifiable entertainment brand.",
-    url: "https://herodossier.lovable.app/blog",
+    url: "https://nakeknight.sonickurrent.space/blog",
     keywords: KEYWORD_CLUSTER.join(", "),
     blogPost: POSTS.map(p => ({
       "@type": "BlogPosting",
       headline: p.title,
       description: p.description,
       datePublished: p.publishedAt,
-      url: `https://herodossier.lovable.app/blog/${p.slug}`,
+      url: `https://nakeknight.sonickurrent.space/blog/${p.slug}`,
       author: { "@type": "Organization", name: "NakeKnight™" },
     })),
   };
