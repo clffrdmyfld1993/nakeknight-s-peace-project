@@ -86,7 +86,7 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    const origin = req.headers.get("origin") || "https://herodossier.lovable.app";
+    const origin = req.headers.get("origin") || "https://nakeknight.sonickurrent.space";
     const metadata = {
       ...(referral ? { referral_code: referral } : {}),
       source,
