@@ -223,9 +223,7 @@ to ship a screenshot of a dashboard. Ship the dashboard.
 
 Listed in roughly the order they're used in a typical build day.
 
-- **Lovable** — the entire web surface (React + Vite + Tailwind),
-  edge functions, and the connection to the backend (Lovable Cloud,
-  which is a managed Supabase under the hood).
+- **Web application** — React + Vite + Tailwind, with hosting and backend services selected independently.
 - **Claude / GPT** — copy, JSON-LD planning, schema reviews,
   TypeScript scaffolding.
 - **Midjourney / Nano Banana** — character and cover art.
