@@ -11,7 +11,7 @@ interface ShareButtonsProps {
 }
 
 const ORIGIN =
-  typeof window !== "undefined" ? window.location.origin : "https://herodossier.lovable.app";
+  typeof window !== "undefined" ? window.location.origin : "https://nakeknight.sonickurrent.space";
 
 function withRef(url: string, ref?: string) {
   const abs = url.startsWith("http") ? url : `${ORIGIN}${url}`;
