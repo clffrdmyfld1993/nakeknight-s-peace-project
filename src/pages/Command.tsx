@@ -33,8 +33,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const LOVABLE_PRO_USD = 25;
-
 interface SkuRow {
   sku: string;
   units: number;
@@ -139,7 +137,6 @@ export default function Command() {
   const visits = clicks;
   const conversion = visits > 0 ? orders / visits : null;
   const rpv = visits > 0 ? (s?.grossCents ?? 0) / 100 / visits : null;
-  const runway = s ? (s.balance.availableCents + s.balance.pendingCents) / 100 / LOVABLE_PRO_USD : 0;
 
   const pieData = (s?.bySku ?? []).filter((r) => r.netCents > 0).map((r) => ({
     name: r.sku,
@@ -243,9 +240,9 @@ export default function Command() {
               />
               <Stat
                 icon={Activity}
-                label="RPV / runway"
+                label="Revenue / search click"
                 value={rpv === null ? "—" : `$${rpv.toFixed(2)}`}
-                sub={`Revenue per visit · Stripe balance covers ${runway.toFixed(1)} months of Lovable Pro`}
+                sub="Gross revenue divided by Search Console clicks"
               />
             </div>
 
