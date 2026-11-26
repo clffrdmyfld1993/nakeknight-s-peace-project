@@ -7,9 +7,9 @@ import { toast } from "sonner";
 const CONTACT_EMAIL = "afterglow619@proton.me";
 const SITE = "https://nakeknight.sonickurrent.space";
 
-const boilerplate = `NakeKnight™ is an AI-native superhero IP. Site, art, lore, store, video, and operational dashboards are generated with AI tooling (Lovable + Claude + Gemini). The brand operates a live Stripe storefront, a verified Google Search Console property, and sitewide GA4 analytics. Every operational number published on herodossier.lovable.app is pulled live from Stripe, GSC, or GA4 — no simulated metrics.`;
+const boilerplate = `NakeKnight™ is a creator-led, LGBTQIA+-positive superhero universe for the weekday grind. He helps people turn everyday conflict into practical, nonviolent next steps. In the story, he crosses timelines through speculative proton energy; his clothing adapts to each era while his face remains consistent.`;
 
-const oneLiner = `NakeKnight™ — the AI-built superhero IP that proves "made by AI" can ship a real product, a real store, and real search traffic.`;
+const oneLiner = `NakeKnight™ — the superhero for the weekday grind, helping people move from conflict toward understanding and a freer weekend.`;
 
 const facts = [
   { k: "Brand", v: "NakeKnight™ (The Peacemaker)" },
