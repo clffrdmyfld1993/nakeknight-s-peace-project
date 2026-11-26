@@ -3,7 +3,7 @@ import { Share2, X, Copy, Twitter } from "lucide-react";
 import { toast } from "sonner";
 import { getStoredRef } from "./RefCapture";
 
-const SITE = "https://herodossier.lovable.app";
+const SITE = "https://nakeknight.sonickurrent.space";
 
 export default function FloatingShareButton() {
   const [open, setOpen] = useState(false);
