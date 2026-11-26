@@ -101,22 +101,31 @@ const PIE_COLORS = [
   "hsl(var(--muted-foreground) / 0.5)",
 ];
 
+const TOKEN_KEY = "nk_admin_token";
+
 export default function Command() {
+  const [adminToken, setAdminToken] = useState(() => localStorage.getItem(TOKEN_KEY) ?? "");
+  const [unlocked, setUnlocked] = useState(() => !!localStorage.getItem(TOKEN_KEY));
   const [stats, setStats] = useState<Stats | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!unlocked) return;
     let cancelled = false;
+    setLoading(true);
     (async () => {
       try {
-        const { data, error } = await supabase.functions.invoke("profit-stats");
+        const token = localStorage.getItem(TOKEN_KEY) ?? "";
+        const { data, error } = await supabase.functions.invoke("profit-stats", {
+          headers: { "x-admin-token": token },
+        });
         if (cancelled) return;
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
         setStats(data as Stats);
       } catch (e) {
-        if (!cancelled) setErr(e instanceof Error ? e.message : String(e));
+        if (!cancelled) setErr(e instanceof Error ? e.message : "Unable to load private finance data.");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -124,7 +133,7 @@ export default function Command() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [unlocked]);
 
   const s = stats;
   const orders = s?.orders ?? 0;
@@ -157,6 +166,43 @@ export default function Command() {
         path="/command"
         noindex
       />
+      {!unlocked ? (
+        <main className="mx-auto flex max-w-xl justify-center px-6 py-24">
+          <section className="w-full rounded-xl border border-border bg-card/70 p-8">
+            <p className="font-display text-xs tracking-[0.3em] text-primary">PRIVATE DASHBOARD</p>
+            <h1 className="mt-3 font-display text-3xl">Admin access required</h1>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Enter the project admin token to view live Stripe and Search Console figures.
+            </p>
+            <form
+              className="mt-6 space-y-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const value = adminToken.trim();
+                if (!value) return;
+                localStorage.setItem(TOKEN_KEY, value);
+                setUnlocked(true);
+              }}
+            >
+              <input
+                type="password"
+                value={adminToken}
+                onChange={(event) => setAdminToken(event.target.value)}
+                autoComplete="current-password"
+                aria-label="Project admin token"
+                placeholder="Admin token"
+                className="w-full rounded-sm border border-border bg-background px-3 py-2 text-sm text-foreground"
+              />
+              <button
+                type="submit"
+                className="w-full rounded-sm bg-primary px-4 py-2 font-display text-sm tracking-widest text-primary-foreground"
+              >
+                UNLOCK DASHBOARD
+              </button>
+            </form>
+          </section>
+        </main>
+      ) : (
       <div className="max-w-6xl mx-auto px-6 py-16">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
           <div className="flex items-center gap-2 mb-2">
@@ -403,6 +449,7 @@ export default function Command() {
           </>
         )}
       </div>
+      )}
     </div>
   );
 }
